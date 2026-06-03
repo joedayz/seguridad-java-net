@@ -9,11 +9,18 @@ y el mismo archivo `.env`.
 ## Arquitectura
 
 ```
-  cliente
+  cliente (curl / Postman / cmd / Git Bash)
         │  device code flow
         ▼
   Microsoft Entra ID  ──JWT──▶  ASP.NET Core API :8084
 ```
+
+### Compatibilidad
+
+| Entorno | Levantar | Token | Probar API |
+|---------|----------|-------|------------|
+| macOS / Linux | `./compose.sh up --build` | `./get-token.sh` | `curl` |
+| Windows sin PowerShell | `docker compose` en **cmd** | `curl.exe` device code (sección abajo) | `curl.exe` |
 
 ### Endpoints
 
@@ -50,12 +57,16 @@ chmod +x compose.sh get-token.sh
 ./compose.sh up --build
 ```
 
-Windows:
+**Windows (cmd):**
 
-```powershell
+```cmd
 copy .env.example .env
-.\compose.ps1 up --build
+docker compose up --build
 ```
+
+**Git Bash:** `cp .env.example .env` y `./compose.sh up --build`
+
+**PowerShell (opcional):** `.\compose.ps1 up --build`
 
 Local sin contenedor:
 
@@ -71,6 +82,8 @@ dotnet run
 
 ## Cómo probar
 
+### macOS / Linux (bash)
+
 ```bash
 curl http://localhost:8084/api/public/hello
 
@@ -79,14 +92,71 @@ curl http://localhost:8084/api/me -H "Authorization: Bearer $TOKEN"
 curl http://localhost:8084/api/admin/hello -H "Authorization: Bearer $TOKEN"
 ```
 
-PowerShell:
+En **Windows** sin PowerShell: [Windows — cmd y curl.exe](#windows--cmd-y-curlexe-sin-powershell).
 
-```powershell
-Invoke-RestMethod http://localhost:8084/api/public/hello
-$TOKEN = .\get-token.ps1
-Invoke-RestMethod http://localhost:8084/api/me -Headers @{ Authorization = "Bearer $TOKEN" }
-Invoke-RestMethod http://localhost:8084/api/admin/hello -Headers @{ Authorization = "Bearer $TOKEN" }
+---
+
+## Windows — cmd y curl.exe (sin PowerShell)
+
+Misma configuración Azure y mismo `.env` que `../entra-spring-security`. Abrí **cmd** en `entra-aspnet`.
+
+Placeholders: `TENANT_ID`, `CLIENT_ID`, `API_CLIENT_ID` (ver tabla en el README de entra-spring-security).
+
+### Levantar y parar
+
+```cmd
+cd sesion2-lab\entra-aspnet
+copy .env.example .env
+docker compose up --build
 ```
+
+```cmd
+docker compose down
+```
+
+### 1. Endpoint público
+
+```cmd
+curl.exe http://localhost:8084/api/public/hello
+```
+
+### 2. Token Entra ID (device code)
+
+**Paso A** — Código de dispositivo:
+
+```cmd
+curl.exe -s -X POST https://login.microsoftonline.com/TENANT_ID/oauth2/v2.0/devicecode -H "Content-Type: application/x-www-form-urlencoded" -d "client_id=CLIENT_ID" -d "scope=api://API_CLIENT_ID/access_as_user openid profile offline_access" -o device.json
+notepad device.json
+```
+
+Abrid `https://microsoft.com/devicelogin`, introducid `user_code` e iniciad sesión.
+
+**Paso B** — Access token (repetir si `authorization_pending`):
+
+```cmd
+curl.exe -s -X POST https://login.microsoftonline.com/TENANT_ID/oauth2/v2.0/token -H "Content-Type: application/x-www-form-urlencoded" -d "grant_type=urn:ietf:params:oauth:grant-type:device_code" -d "client_id=CLIENT_ID" -d "device_code=PEGAR_DEVICE_CODE" -o token.json
+notepad token.json
+```
+
+```cmd
+set TOKEN=eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIs...
+```
+
+### 3. Endpoint autenticado
+
+```cmd
+curl.exe http://localhost:8084/api/me -H "Authorization: Bearer %TOKEN%"
+```
+
+### 4. Endpoint admin
+
+```cmd
+curl.exe http://localhost:8084/api/admin/hello -H "Authorization: Bearer %TOKEN%"
+```
+
+| Servicio | URL |
+|----------|-----|
+| API | http://localhost:8084 |
 
 ---
 

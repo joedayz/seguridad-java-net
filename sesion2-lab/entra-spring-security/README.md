@@ -9,7 +9,7 @@ Misma idea que la demo Keycloak (`../spring-security`), pero el issuer es
 ## Arquitectura
 
 ```
-  cliente (curl / Postman / PowerShell)
+  cliente (curl / Postman / cmd / Git Bash)
         │  1) device code flow (navegador / Microsoft login)
         ▼
   ┌─────────────────────┐        2) JWT          ┌──────────────────┐
@@ -34,7 +34,8 @@ Misma idea que la demo Keycloak (`../spring-security`), pero el issuer es
 | Entorno | Levantar servicios | Obtener token | Probar endpoints |
 |---------|-------------------|---------------|------------------|
 | macOS / Linux | `./compose.sh up --build` | `./get-token.sh` | `curl` |
-| Windows | `.\compose.ps1 up --build` | `.\get-token.ps1` | `Invoke-RestMethod` |
+| Windows (PowerShell permitido) | `.\compose.ps1 up --build` | `.\get-token.ps1` | `curl` o Postman |
+| Windows **sin PowerShell** | `docker compose` en **cmd** | `curl.exe` device code (sección abajo) | `curl.exe` |
 
 ---
 
@@ -99,11 +100,16 @@ chmod +x compose.sh get-token.sh
 ./compose.sh up --build
 ```
 
-Windows:
+**Windows (cmd):**
 
-```powershell
-.\compose.ps1 up --build
+```cmd
+copy .env.example .env
+docker compose up --build
 ```
+
+**Windows (Git Bash):** `cp .env.example .env` y `./compose.sh up --build`
+
+**Windows (PowerShell, opcional):** `.\compose.ps1 up --build`
 
 Solo el resource server (sin contenedor):
 
@@ -117,44 +123,115 @@ mvn spring-boot:run
 
 ## Cómo probar
 
-### 1. Endpoint público
+### macOS / Linux (bash)
+
+**1. Endpoint público**
 
 ```bash
 curl http://localhost:8083/api/public/hello
 ```
 
-### 2. Obtener token (device code)
-
-El script abre el flujo en el navegador; inicia sesión con el usuario que tenga el rol deseado.
+**2. Token (device code)**
 
 ```bash
 TOKEN=$(./get-token.sh)
 echo "$TOKEN"
 ```
 
-Windows:
+**3. Autenticado y admin**
 
-```powershell
-$TOKEN = .\get-token.ps1
+```bash
+curl http://localhost:8083/api/me -H "Authorization: Bearer $TOKEN"
+curl http://localhost:8083/api/admin/hello -H "Authorization: Bearer $TOKEN"
+```
+
+Deberías ver `roles` (p. ej. `["ADMIN"]`). Usuario solo **USER** en Entra → **403** en admin.
+
+En **Windows** sin PowerShell: [Windows — cmd y curl.exe](#windows--cmd-y-curlexe-sin-powershell).
+
+---
+
+## Windows — cmd y curl.exe (sin PowerShell)
+
+Abrí **cmd** en `entra-spring-security`. Antes, copiad `.env.example` a `.env` y editad los GUIDs con el Bloc de notas.
+
+Sustituid en los comandos (valores de vuestro `.env`):
+
+| Placeholder | Variable `.env` |
+|-------------|-----------------|
+| `TENANT_ID` | `AZURE_TENANT_ID` |
+| `CLIENT_ID` | `AZURE_CLIENT_ID` |
+| `API_CLIENT_ID` | `AZURE_API_CLIENT_ID` |
+
+El **scope** suele ser `api://API_CLIENT_ID/access_as_user`.
+
+### Levantar y parar
+
+```cmd
+cd sesion2-lab\entra-spring-security
+copy .env.example .env
+docker compose up --build
+```
+
+```cmd
+docker compose down
+```
+
+### 1. Endpoint público
+
+```cmd
+curl.exe http://localhost:8083/api/public/hello
+```
+
+### 2. Token Entra ID (device code) con curl.exe
+
+**Paso A** — Pedir código de dispositivo (ajustad el `scope`):
+
+```cmd
+curl.exe -s -X POST https://login.microsoftonline.com/TENANT_ID/oauth2/v2.0/devicecode -H "Content-Type: application/x-www-form-urlencoded" -d "client_id=CLIENT_ID" -d "scope=api://API_CLIENT_ID/access_as_user openid profile offline_access" -o device.json
+notepad device.json
+```
+
+1. Abri `https://microsoft.com/devicelogin`
+2. Introducid el `user_code` del JSON
+3. Iniciad sesión con la cuenta que tenga rol **ADMIN** o **USER**
+
+Copiad `device_code` del mismo fichero.
+
+**Paso B** — Canjear por access token (repetid cada ~5 s si sale `authorization_pending`):
+
+```cmd
+curl.exe -s -X POST https://login.microsoftonline.com/TENANT_ID/oauth2/v2.0/token -H "Content-Type: application/x-www-form-urlencoded" -d "grant_type=urn:ietf:params:oauth:grant-type:device_code" -d "client_id=CLIENT_ID" -d "device_code=PEGAR_DEVICE_CODE" -o token.json
+notepad token.json
+```
+
+Copiad `access_token` y definid:
+
+```cmd
+set TOKEN=eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIs...
 ```
 
 ### 3. Endpoint autenticado
 
-```bash
-curl http://localhost:8083/api/me -H "Authorization: Bearer $TOKEN"
+```cmd
+curl.exe http://localhost:8083/api/me -H "Authorization: Bearer %TOKEN%"
 ```
-
-Deberías ver el claim `roles` (p. ej. `["ADMIN"]`).
 
 ### 4. Endpoint admin
 
-Usuario con app role **ADMIN** → **200 OK**:
-
-```bash
-curl http://localhost:8083/api/admin/hello -H "Authorization: Bearer $TOKEN"
+```cmd
+curl.exe http://localhost:8083/api/admin/hello -H "Authorization: Bearer %TOKEN%"
 ```
 
-Usuario solo con **USER** → **403 Forbidden** (vuelve a pedir token iniciando sesión con esa cuenta).
+Cuenta con rol **USER** en Entra → **403**. Volvé a hacer el paso 2 con esa cuenta.
+
+### Puerto API
+
+| Servicio | URL |
+|----------|-----|
+| Resource Server | http://localhost:8083 |
+
+Inspeccionar JWT: https://jwt.ms
 
 ---
 

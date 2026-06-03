@@ -7,7 +7,7 @@ contrasenas estricta, bloqueo por intentos fallidos y confirmacion de email obli
 ## Arquitectura
 
 ```
-  cliente (curl / Postman / PowerShell)
+  cliente (curl / Postman / cmd / Git Bash)
         │  1) POST /api/auth/login
         ▼
   ┌──────────────────┐     JWT Bearer     ┌─────────────────────┐
@@ -59,8 +59,9 @@ contrasenas estricta, bloqueo por intentos fallidos y confirmacion de email obli
 |---------|-------------------|---------------|------------------|
 | macOS / Linux + **Podman** | `podman compose up --build` | `./get-token.sh` | `curl` (bash) |
 | macOS / Linux + **Docker** | `docker compose up --build` | `./get-token.sh` | `curl` (bash) |
-| Windows + **Docker Desktop** | `docker compose up --build` | `.\get-token.ps1` | `Invoke-RestMethod` |
-| Windows + **Podman Desktop** | `podman compose up --build` | `.\get-token.ps1` | `Invoke-RestMethod` |
+| Windows + **Docker Desktop** | `docker compose up --build` | `.\get-token.ps1` o **curl** (cmd) | `curl` o Postman |
+| Windows + **Podman Desktop** | `podman compose up --build` | igual que arriba | `curl` o Postman |
+| Windows **sin PowerShell** | `docker compose` en **cmd** | `curl.exe` (ver sección abajo) | `curl.exe` |
 | Cualquiera (auto-detecta) | `./compose.sh` / `.\compose.ps1` | scripts anteriores | segun SO |
 
 ---
@@ -100,9 +101,9 @@ docker compose down
 docker compose down --rmi local -v
 ```
 
-En **Windows (PowerShell)**:
+En **Windows (cmd)** — sin PowerShell:
 
-```powershell
+```cmd
 docker compose up --build
 docker compose down
 ```
@@ -117,12 +118,9 @@ chmod +x compose.sh get-token.sh
 ./compose.sh down
 ```
 
-**Windows (PowerShell):**
+**Windows con PowerShell** (opcional): `.\compose.ps1 up --build`
 
-```powershell
-.\compose.ps1 up --build
-.\compose.ps1 down
-```
+> En Windows sin PowerShell: [Windows — cmd y curl.exe](#windows--cmd-y-curlexe-sin-powershell).
 
 > El script de bash prioriza Podman; el de PowerShell prioriza Docker Desktop (habitual en Windows).
 
@@ -188,46 +186,91 @@ curl -s -X POST http://localhost:8082/api/auth/confirm-email \
 
 Tras 5 logins fallidos con la misma cuenta, el siguiente intento devuelve **423 Locked** durante 15 minutos.
 
-### Windows (PowerShell)
+En **Windows** sin PowerShell: [Windows — cmd y curl.exe](#windows--cmd-y-curlexe-sin-powershell).
 
-**1. Endpoint publico**
+---
 
-```powershell
-Invoke-RestMethod http://localhost:8082/api/public/hello
+## Windows — cmd y curl.exe (sin PowerShell)
+
+Abrí **cmd** en la carpeta `aspnet-identity`. Usad `curl.exe`; no hace falta PowerShell.
+
+### Levantar y parar servicios
+
+```cmd
+cd sesion2-lab\aspnet-identity
+docker compose up --build
 ```
 
-**2. Login y token JWT**
-
-```powershell
-$TOKEN = .\get-token.ps1 -Username alice -Password "Password123!"
-$TOKEN
+```cmd
+docker compose down
 ```
 
-**3. Endpoint autenticado**
+### 1. Endpoint publico
 
-```powershell
-Invoke-RestMethod http://localhost:8082/api/me `
-    -Headers @{ Authorization = "Bearer $TOKEN" }
+```cmd
+curl.exe http://localhost:8082/api/public/hello
 ```
 
-**4. Endpoint admin**
+### 2. Login y token JWT
 
-```powershell
-Invoke-RestMethod http://localhost:8082/api/admin/hello `
-    -Headers @{ Authorization = "Bearer $TOKEN" }
+```cmd
+curl.exe -s -X POST http://localhost:8082/api/auth/login -H "Content-Type: application/json" -d "{\"username\":\"alice\",\"password\":\"Password123!\"}" -o token.json
+notepad token.json
 ```
 
-Con `bob` → **403 Forbidden**:
+Copiad el valor de `accessToken` y definid:
 
-```powershell
-$TOKEN_BOB = .\get-token.ps1 -Username bob -Password "Password123!"
-try {
-    Invoke-RestMethod http://localhost:8082/api/admin/hello `
-        -Headers @{ Authorization = "Bearer $TOKEN_BOB" }
-} catch {
-    $_.Exception.Response.StatusCode.value__
-}
+```cmd
+set TOKEN=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
 ```
+
+### 3. Endpoint autenticado
+
+```cmd
+curl.exe http://localhost:8082/api/me -H "Authorization: Bearer %TOKEN%"
+```
+
+### 4. Endpoint admin
+
+Con **alice** (Admin):
+
+```cmd
+curl.exe http://localhost:8082/api/admin/hello -H "Authorization: Bearer %TOKEN%"
+```
+
+Con **bob** (`Password123!` en el login del paso 2) → **403**:
+
+```cmd
+curl.exe -s -X POST http://localhost:8082/api/auth/login -H "Content-Type: application/json" -d "{\"username\":\"bob\",\"password\":\"Password123!\"}" -o token-bob.json
+notepad token-bob.json
+set TOKEN=...valor accessToken de bob...
+curl.exe -i http://localhost:8082/api/admin/hello -H "Authorization: Bearer %TOKEN%"
+```
+
+### 5. Politica de contrasenas (registro)
+
+```cmd
+curl.exe -s -X POST http://localhost:8082/api/auth/register -H "Content-Type: application/json" -d "{\"username\":\"carol\",\"email\":\"carol@example.com\",\"password\":\"corta\"}"
+```
+
+### 6. Confirmacion de email
+
+Sustituid el token que devolvio el registro en Development:
+
+```cmd
+curl.exe -s -X POST http://localhost:8082/api/auth/confirm-email -H "Content-Type: application/json" -d "{\"email\":\"carol@example.com\",\"token\":\"PEGAR_CONFIRMATION_TOKEN\"}"
+```
+
+### 7. Bloqueo por intentos fallidos
+
+Repetid login incorrecto 5 veces; el sexto intento valido puede devolver **423 Locked**.
+
+### Puerto API
+
+| Servicio | URL |
+|----------|-----|
+| API | http://localhost:8082 |
+| PostgreSQL | localhost:5433 |
 
 ---
 
@@ -251,9 +294,9 @@ cd identity-demo
 dotnet run
 ```
 
-**Windows (PowerShell):**
+**Windows (cmd o PowerShell):**
 
-```powershell
+```cmd
 docker compose up postgres
 cd identity-demo
 dotnet run

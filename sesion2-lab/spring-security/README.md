@@ -7,7 +7,7 @@ por roles, tal y como se ve en la configuración de `SecurityConfig`.
 ## Arquitectura
 
 ```
-  cliente (curl / Postman / PowerShell)
+  cliente (curl / Postman / cmd / Git Bash)
         │  1) pide token (usuario+password)
         ▼
   ┌─────────────┐        2) JWT          ┌──────────────────┐
@@ -43,8 +43,9 @@ por roles, tal y como se ve en la configuración de `SecurityConfig`.
 |---------|-------------------|---------------|------------------|
 | macOS / Linux + **Podman** | `podman compose up --build` | `./get-token.sh` | `curl` (bash) |
 | macOS / Linux + **Docker** | `docker compose up --build` | `./get-token.sh` | `curl` (bash) |
-| Windows + **Docker Desktop** | `docker compose up --build` | `.\get-token.ps1` | `Invoke-RestMethod` |
-| Windows + **Podman Desktop** | `podman compose up --build` | `.\get-token.ps1` | `Invoke-RestMethod` |
+| Windows + **Docker Desktop** | `docker compose up --build` | `.\get-token.ps1` o **curl** (cmd) | `curl` o Postman |
+| Windows + **Podman Desktop** | `podman compose up --build` | igual que arriba | `curl` o Postman |
+| Windows **sin PowerShell** | `docker compose` en **cmd** | `curl.exe` (ver sección abajo) | `curl.exe` |
 | Cualquiera (auto-detecta) | `./compose.sh` / `.\compose.ps1` | scripts anteriores | según SO |
 
 ---
@@ -94,12 +95,14 @@ docker compose down
 docker compose down --rmi local   # también elimina imágenes locales
 ```
 
-En **Windows (PowerShell)**:
+En **Windows**, en **Símbolo del sistema (cmd)** — no hace falta PowerShell:
 
-```powershell
+```cmd
 docker compose up --build
 docker compose down
 ```
+
+(O con PowerShell, si lo tenéis permitido: `docker compose up --build`.)
 
 ### Script de ayuda (detecta Podman o Docker)
 
@@ -111,12 +114,14 @@ chmod +x compose.sh get-token.sh
 ./compose.sh down
 ```
 
-**Windows (PowerShell):**
+**Windows con PowerShell** (opcional):
 
 ```powershell
 .\compose.ps1 up --build
 .\compose.ps1 down
 ```
+
+> En Windows sin PowerShell, usad la sección [Windows — cmd y curl.exe](#windows--cmd-y-curlexe-sin-powershell).
 
 > El script de bash prioriza Podman; el de PowerShell prioriza Docker Desktop (habitual en Windows).
 
@@ -171,66 +176,73 @@ TOKEN_BOB=$(./get-token.sh bob password)
 curl -i http://localhost:8081/api/admin/hello -H "Authorization: Bearer $TOKEN_BOB"
 ```
 
-### Windows (PowerShell)
+En **Windows** sin PowerShell, seguid la sección [Windows — cmd y curl.exe](#windows--cmd-y-curlexe-sin-powershell).
 
-**1. Endpoint público (sin token)**
+---
 
-```powershell
-Invoke-RestMethod http://localhost:8081/api/public/hello
+## Windows — cmd y curl.exe (sin PowerShell)
+
+Abrí **Símbolo del sistema (cmd)** en la carpeta `spring-security`. Usad `curl.exe` (incluido en Windows 10/11).
+No hace falta PowerShell ni los scripts `.ps1`.
+
+### Levantar y parar servicios
+
+```cmd
+cd sesion2-lab\spring-security
+docker compose up --build
 ```
 
-**2. Conseguir un token**
+Otra ventana cmd para parar (Ctrl+C en la primera, o):
 
-```powershell
-$TOKEN = .\get-token.ps1 -Username alice -Password password   # alice = ADMIN
-$TOKEN
+```cmd
+docker compose down
 ```
 
-O directamente con `Invoke-RestMethod`:
+### 1. Endpoint público
 
-```powershell
-$body = @{
-    grant_type    = "password"
-    client_id     = "demo-client"
-    client_secret = "demo-secret"
-    username      = "alice"
-    password      = "password"
-}
-$response = Invoke-RestMethod `
-    -Uri "http://localhost:8080/realms/demo/protocol/openid-connect/token" `
-    -Method Post `
-    -ContentType "application/x-www-form-urlencoded" `
-    -Body $body
-$TOKEN = $response.access_token
+```cmd
+curl.exe http://localhost:8081/api/public/hello
 ```
 
-**3. Endpoint autenticado**
+### 2. Obtener token (Keycloak)
 
-```powershell
-Invoke-RestMethod http://localhost:8081/api/me `
-    -Headers @{ Authorization = "Bearer $TOKEN" }
+Guardad la respuesta en un fichero y copiad el valor de `access_token` (sin comillas):
+
+```cmd
+curl.exe -s -X POST http://localhost:8080/realms/demo/protocol/openid-connect/token -H "Content-Type: application/x-www-form-urlencoded" -d "grant_type=password" -d "client_id=demo-client" -d "client_secret=demo-secret" -d "username=alice" -d "password=password" -o token.json
+notepad token.json
 ```
 
-**4. Endpoint de admin**
+Definid la variable con el token copiado (una sola línea, sin espacios):
 
-Con `alice` (ADMIN) → **200 OK**:
-
-```powershell
-Invoke-RestMethod http://localhost:8081/api/admin/hello `
-    -Headers @{ Authorization = "Bearer $TOKEN" }
+```cmd
+set TOKEN=eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9...
 ```
 
-Con `bob` (solo USER) → **403 Forbidden**:
+Usuario **bob** (solo rol USER): cambiad `username=bob` en el paso 2.
 
-```powershell
-$TOKEN_BOB = .\get-token.ps1 -Username bob -Password password
-try {
-    Invoke-RestMethod http://localhost:8081/api/admin/hello `
-        -Headers @{ Authorization = "Bearer $TOKEN_BOB" }
-} catch {
-    $_.Exception.Response.StatusCode.value__   # debería ser 403
-}
+### 3. Endpoint autenticado
+
+```cmd
+curl.exe http://localhost:8081/api/me -H "Authorization: Bearer %TOKEN%"
 ```
+
+### 4. Endpoint admin
+
+Con token de **alice** (ADMIN) → **200 OK**:
+
+```cmd
+curl.exe http://localhost:8081/api/admin/hello -H "Authorization: Bearer %TOKEN%"
+```
+
+Con **bob**, repetid el paso 2 con `username=bob`, asignad `set TOKEN=...` y volved a llamar a `/api/admin/hello` → debe devolver **403**.
+
+### Resumen de puertos
+
+| Servicio | URL |
+|----------|-----|
+| Keycloak | http://localhost:8080 |
+| Resource Server | http://localhost:8081 |
 
 ---
 
@@ -263,9 +275,9 @@ cd resource-server
 mvn spring-boot:run
 ```
 
-**Windows (PowerShell):**
+**Windows (cmd o PowerShell):**
 
-```powershell
+```cmd
 docker compose up keycloak
 cd resource-server
 mvn spring-boot:run

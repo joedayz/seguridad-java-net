@@ -1,0 +1,14 @@
+services:
+  entra-demo:
+    build: ./entra-demo
+    container_name: entra-aspnet-demo
+    env_file:
+      - path: .env
+        required: false
+    environment:
+      AzureAd__TenantId: ${AZURE_TENANT_ID:?Define AZURE_TENANT_ID en .env}
+      AzureAd__ClientId: ${AZURE_API_CLIENT_ID:?Define AZURE_API_CLIENT_ID en .env}
+      AzureAd__Audience: ${AZURE_API_AUDIENCE:-}
+      ASPNETCORE_ENVIRONMENT: Development
+    ports:
+      - "8084:8084"

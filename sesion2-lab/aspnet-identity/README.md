@@ -139,9 +139,15 @@ curl http://localhost:8082/api/public/hello
 **2. Login y token JWT**
 
 ```bash
-TOKEN=$(./get-token.sh alice Password123!)
+TOKEN=$(./get-token.sh alice)
 echo "$TOKEN"
 ```
+
+> **zsh:** la contraseña lleva `!`. No la pongáis sin comillas (`Password123!` rompe el shell).
+> Usad `./get-token.sh alice` (password por defecto) o `./get-token.sh alice 'Password123!'`.
+
+> **macOS/Linux:** si aparece `env: bash\r: No such file or directory`, el script tiene finales de línea Windows.
+> En la carpeta del lab: `sed -i '' $'s/\r$//' get-token.sh compose.sh` y `chmod +x get-token.sh compose.sh`.
 
 **3. Endpoint autenticado**
 
@@ -160,7 +166,7 @@ curl http://localhost:8082/api/admin/hello -H "Authorization: Bearer $TOKEN"
 Con `bob` (solo User) → **403 Forbidden**:
 
 ```bash
-TOKEN_BOB=$(./get-token.sh bob Password123!)
+TOKEN_BOB=$(./get-token.sh bob)
 curl -i http://localhost:8082/api/admin/hello -H "Authorization: Bearer $TOKEN_BOB"
 ```
 

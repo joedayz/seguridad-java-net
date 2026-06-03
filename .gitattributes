@@ -1,0 +1,2 @@
+# Scripts de shell deben usar LF (evita "env: bash\r: No such file or directory" en macOS/Linux)
+*.sh text eol=lf

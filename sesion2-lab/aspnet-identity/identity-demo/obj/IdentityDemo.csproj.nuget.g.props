@@ -4,13 +4,13 @@
     <RestoreSuccess Condition=" '$(RestoreSuccess)' == '' ">True</RestoreSuccess>
     <RestoreTool Condition=" '$(RestoreTool)' == '' ">NuGet</RestoreTool>
     <ProjectAssetsFile Condition=" '$(ProjectAssetsFile)' == '' ">$(MSBuildThisFileDirectory)project.assets.json</ProjectAssetsFile>
-    <NuGetPackageRoot Condition=" '$(NuGetPackageRoot)' == '' ">/var/folders/w0/703q3t5d04gg5p80zp0nkkjm0000gn/T/cursor-sandbox-cache/66877b84d1066c9f1362bc5c47bbb3b2/nuget</NuGetPackageRoot>
-    <NuGetPackageFolders Condition=" '$(NuGetPackageFolders)' == '' ">/var/folders/w0/703q3t5d04gg5p80zp0nkkjm0000gn/T/cursor-sandbox-cache/66877b84d1066c9f1362bc5c47bbb3b2/nuget</NuGetPackageFolders>
+    <NuGetPackageRoot Condition=" '$(NuGetPackageRoot)' == '' ">/var/folders/w0/703q3t5d04gg5p80zp0nkkjm0000gn/T/cursor-sandbox-cache/5f9212ab5900a0c619faf5a5f670cb90/nuget</NuGetPackageRoot>
+    <NuGetPackageFolders Condition=" '$(NuGetPackageFolders)' == '' ">/var/folders/w0/703q3t5d04gg5p80zp0nkkjm0000gn/T/cursor-sandbox-cache/5f9212ab5900a0c619faf5a5f670cb90/nuget</NuGetPackageFolders>
     <NuGetProjectStyle Condition=" '$(NuGetProjectStyle)' == '' ">PackageReference</NuGetProjectStyle>
     <NuGetToolVersion Condition=" '$(NuGetToolVersion)' == '' ">7.0.0</NuGetToolVersion>
   </PropertyGroup>
   <ItemGroup Condition=" '$(ExcludeRestorePackageImports)' != 'true' ">
-    <SourceRoot Include="/var/folders/w0/703q3t5d04gg5p80zp0nkkjm0000gn/T/cursor-sandbox-cache/66877b84d1066c9f1362bc5c47bbb3b2/nuget/" />
+    <SourceRoot Include="/var/folders/w0/703q3t5d04gg5p80zp0nkkjm0000gn/T/cursor-sandbox-cache/5f9212ab5900a0c619faf5a5f670cb90/nuget/" />
   </ItemGroup>
   <ImportGroup Condition=" '$(ExcludeRestorePackageImports)' != 'true' ">
     <Import Project="$(NuGetPackageRoot)/microsoft.entityframeworkcore/8.0.11/buildTransitive/net8.0/Microsoft.EntityFrameworkCore.props" Condition="Exists('$(NuGetPackageRoot)/microsoft.entityframeworkcore/8.0.11/buildTransitive/net8.0/Microsoft.EntityFrameworkCore.props')" />

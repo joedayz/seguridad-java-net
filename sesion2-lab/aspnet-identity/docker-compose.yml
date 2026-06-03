@@ -12,13 +12,15 @@ services:
       - postgres_data:/var/lib/postgresql/data
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U demo -d identitydemo"]
-      interval: 5s
+      interval: 2s
       timeout: 5s
-      retries: 10
+      retries: 15
+      start_period: 20s
 
   identity-demo:
     build: ./identity-demo
     container_name: identity-demo
+    restart: on-failure
     depends_on:
       postgres:
         condition: service_healthy

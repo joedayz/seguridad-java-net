@@ -1,6 +1,8 @@
 #!/usr/bin/env bash
 # Obtiene un JWT de la API via login.
 # Uso:   ./get-token.sh [usuario] [password]
+#        ./get-token.sh alice              # password por defecto (Password123!)
+# En zsh, si pasas password con !, usad comillas simples: ./get-token.sh alice 'Password123!'
 # En Windows usa get-token.ps1
 set -euo pipefail
 

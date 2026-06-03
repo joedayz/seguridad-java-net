@@ -21,3 +21,5 @@ Cada demo incluye la sección **「Windows — cmd y curl.exe (sin PowerShell)�
 | entra-aspnet | [Windows — cmd y curl.exe](entra-aspnet/README.md#windows--cmd-y-curlexe-sin-powershell) |
 
 Los scripts `.ps1` son opcionales.
+
+Los `.sh` del repo usan finales de línea **LF** (`.gitattributes`). Si ves `env: bash\r: No such file or directory`, convertid con `sed -i '' $'s/\r$//' *.sh` en la carpeta de la demo.

@@ -1197,16 +1197,16 @@
     ]
   },
   "packageFolders": {
-    "/var/folders/w0/703q3t5d04gg5p80zp0nkkjm0000gn/T/cursor-sandbox-cache/66877b84d1066c9f1362bc5c47bbb3b2/nuget": {}
+    "/var/folders/w0/703q3t5d04gg5p80zp0nkkjm0000gn/T/cursor-sandbox-cache/5f9212ab5900a0c619faf5a5f670cb90/nuget": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "/Users/josediaz/Projects/cas-training/sesion2-lab/aspnet-identity/identity-demo/IdentityDemo.csproj",
+      "projectUniqueName": "/Users/josediaz/Projects/cas-training/seguridad-java-net/sesion2-lab/aspnet-identity/identity-demo/IdentityDemo.csproj",
       "projectName": "IdentityDemo",
-      "projectPath": "/Users/josediaz/Projects/cas-training/sesion2-lab/aspnet-identity/identity-demo/IdentityDemo.csproj",
-      "packagesPath": "/var/folders/w0/703q3t5d04gg5p80zp0nkkjm0000gn/T/cursor-sandbox-cache/66877b84d1066c9f1362bc5c47bbb3b2/nuget",
-      "outputPath": "/Users/josediaz/Projects/cas-training/sesion2-lab/aspnet-identity/identity-demo/obj/",
+      "projectPath": "/Users/josediaz/Projects/cas-training/seguridad-java-net/sesion2-lab/aspnet-identity/identity-demo/IdentityDemo.csproj",
+      "packagesPath": "/var/folders/w0/703q3t5d04gg5p80zp0nkkjm0000gn/T/cursor-sandbox-cache/5f9212ab5900a0c619faf5a5f670cb90/nuget",
+      "outputPath": "/Users/josediaz/Projects/cas-training/seguridad-java-net/sesion2-lab/aspnet-identity/identity-demo/obj/",
       "projectStyle": "PackageReference",
       "configFilePaths": [
         "/Users/josediaz/.nuget/NuGet/NuGet.Config"

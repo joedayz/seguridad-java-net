@@ -1,0 +1,13 @@
+@host = http://localhost:8085
+@token = PEGAR_ACCESS_TOKEN_DE_KEYCLOAK
+
+### Publico (sin token)
+GET {{host}}/api/public/hello
+
+### Perfil autenticado
+GET {{host}}/api/me
+Authorization: Bearer {{token}}
+
+### Solo ADMIN
+GET {{host}}/api/admin/hello
+Authorization: Bearer {{token}}

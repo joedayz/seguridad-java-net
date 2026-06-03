@@ -4,6 +4,7 @@
 |---------|-------------|------------|
 | [spring-security](spring-security) | Spring Boot + **Keycloak** (local) | 8081 |
 | [aspnet-identity](aspnet-identity) | ASP.NET Core **Identity** + PostgreSQL | 8082 |
+| [aspnet-identity-keycloak](aspnet-identity-keycloak) | ASP.NET Core + **Keycloak** (resource server) | 8085 |
 | [entra-spring-security](entra-spring-security) | Spring Boot + **Microsoft Entra ID** | 8083 |
 | [entra-aspnet](entra-aspnet) | ASP.NET Core + **Microsoft Entra ID** | 8084 |
 
@@ -17,6 +18,7 @@ Cada demo incluye la sección **「Windows — cmd y curl.exe (sin PowerShell)�
 |------|----------------------|
 | spring-security | [Windows — cmd y curl.exe](spring-security/README.md#windows--cmd-y-curlexe-sin-powershell) |
 | aspnet-identity | [Windows — cmd y curl.exe](aspnet-identity/README.md#windows--cmd-y-curlexe-sin-powershell) |
+| aspnet-identity-keycloak | [Windows — cmd y curl.exe](aspnet-identity-keycloak/README.md#windows--cmd-y-curlexe-sin-powershell) |
 | entra-spring-security | [Windows — cmd y curl.exe](entra-spring-security/README.md#windows--cmd-y-curlexe-sin-powershell) |
 | entra-aspnet | [Windows — cmd y curl.exe](entra-aspnet/README.md#windows--cmd-y-curlexe-sin-powershell) |
 

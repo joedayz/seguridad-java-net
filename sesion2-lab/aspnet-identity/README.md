@@ -310,15 +310,15 @@ dotnet run
 
 La connection string por defecto en `appsettings.json` apunta a `localhost:5433`.
 
-## Comparacion con la demo Spring Security + Keycloak
+## Comparacion con Keycloak y la variante .NET
 
-| Aspecto | Spring Security (`../spring-security`) | ASP.NET Identity (esta demo) |
-|---------|----------------------------------------|------------------------------|
-| IdP / auth | Keycloak externo | Identity integrado en la app |
-| Token | JWT de Keycloak | JWT generado por la API |
-| Puerto API | 8081 | 8082 |
-| Roles | `ADMIN`, `USER` | `Admin`, `User` |
-| Password demo | `password` | `Password123!` (cumple politica) |
+| Aspecto | Spring (`../spring-security`) | ASP.NET + Keycloak (`../aspnet-identity-keycloak`) | ASP.NET Identity (esta demo) |
+|---------|-------------------------------|----------------------------------------------------|------------------------------|
+| IdP / auth | Keycloak externo | Keycloak externo | Identity integrado en la app |
+| Token | JWT de Keycloak | JWT de Keycloak | JWT generado por la API |
+| Puerto API | 8081 | 8085 | 8082 |
+| Roles | `ADMIN`, `USER` | `ADMIN`, `USER` | `Admin`, `User` |
+| Password demo | `password` | `password` | `Password123!` (cumple politica) |
 
 ## Nota de produccion
 

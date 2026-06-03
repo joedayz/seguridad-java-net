@@ -1,0 +1,30 @@
+services:
+  keycloak:
+    image: quay.io/keycloak/keycloak:26.0
+    container_name: keycloak-aspnet
+    command:
+      - start-dev
+      - --import-realm
+    environment:
+      KC_BOOTSTRAP_ADMIN_USERNAME: admin
+      KC_BOOTSTRAP_ADMIN_PASSWORD: admin
+      KC_HEALTH_ENABLED: "true"
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./keycloak/realm-export.json:/opt/keycloak/data/import/realm-export.json:ro
+
+  identity-demo:
+    build: ./identity-demo
+    container_name: identity-demo-keycloak
+    restart: on-failure
+    depends_on:
+      - keycloak
+    environment:
+      ASPNETCORE_ENVIRONMENT: Development
+      # La metadata/JWKS se descarga por la red interna del compose (servicio "keycloak").
+      Keycloak__MetadataAddress: http://keycloak:8080/realms/demo/.well-known/openid-configuration
+      # El issuer DEBE coincidir con el "iss" del token, que los clientes obtienen via localhost:8080.
+      Keycloak__Issuer: http://localhost:8080/realms/demo
+    ports:
+      - "8085:8085"

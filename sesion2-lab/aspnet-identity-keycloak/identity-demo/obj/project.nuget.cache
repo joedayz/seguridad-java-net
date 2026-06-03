@@ -1,0 +1,30 @@
+{
+  "version": 2,
+  "dgSpecHash": "GGf7VFx0Rfk=",
+  "success": true,
+  "projectFilePath": "/Users/josediaz/Projects/cas-training/seguridad-java-net/sesion2-lab/aspnet-identity-keycloak/identity-demo/IdentityDemo.csproj",
+  "expectedPackageFiles": [
+    "/var/folders/w0/703q3t5d04gg5p80zp0nkkjm0000gn/T/cursor-sandbox-cache/b00d64ec765eca042f6d1637ecc3589c/nuget/microsoft.aspnetcore.authentication.jwtbearer/8.0.11/microsoft.aspnetcore.authentication.jwtbearer.8.0.11.nupkg.sha512",
+    "/var/folders/w0/703q3t5d04gg5p80zp0nkkjm0000gn/T/cursor-sandbox-cache/b00d64ec765eca042f6d1637ecc3589c/nuget/microsoft.identitymodel.abstractions/7.1.2/microsoft.identitymodel.abstractions.7.1.2.nupkg.sha512",
+    "/var/folders/w0/703q3t5d04gg5p80zp0nkkjm0000gn/T/cursor-sandbox-cache/b00d64ec765eca042f6d1637ecc3589c/nuget/microsoft.identitymodel.jsonwebtokens/7.1.2/microsoft.identitymodel.jsonwebtokens.7.1.2.nupkg.sha512",
+    "/var/folders/w0/703q3t5d04gg5p80zp0nkkjm0000gn/T/cursor-sandbox-cache/b00d64ec765eca042f6d1637ecc3589c/nuget/microsoft.identitymodel.logging/7.1.2/microsoft.identitymodel.logging.7.1.2.nupkg.sha512",
+    "/var/folders/w0/703q3t5d04gg5p80zp0nkkjm0000gn/T/cursor-sandbox-cache/b00d64ec765eca042f6d1637ecc3589c/nuget/microsoft.identitymodel.protocols/7.1.2/microsoft.identitymodel.protocols.7.1.2.nupkg.sha512",
+    "/var/folders/w0/703q3t5d04gg5p80zp0nkkjm0000gn/T/cursor-sandbox-cache/b00d64ec765eca042f6d1637ecc3589c/nuget/microsoft.identitymodel.protocols.openidconnect/7.1.2/microsoft.identitymodel.protocols.openidconnect.7.1.2.nupkg.sha512",
+    "/var/folders/w0/703q3t5d04gg5p80zp0nkkjm0000gn/T/cursor-sandbox-cache/b00d64ec765eca042f6d1637ecc3589c/nuget/microsoft.identitymodel.tokens/7.1.2/microsoft.identitymodel.tokens.7.1.2.nupkg.sha512",
+    "/var/folders/w0/703q3t5d04gg5p80zp0nkkjm0000gn/T/cursor-sandbox-cache/b00d64ec765eca042f6d1637ecc3589c/nuget/system.identitymodel.tokens.jwt/7.1.2/system.identitymodel.tokens.jwt.7.1.2.nupkg.sha512",
+    "/var/folders/w0/703q3t5d04gg5p80zp0nkkjm0000gn/T/cursor-sandbox-cache/b00d64ec765eca042f6d1637ecc3589c/nuget/microsoft.netcore.app.ref/8.0.22/microsoft.netcore.app.ref.8.0.22.nupkg.sha512",
+    "/var/folders/w0/703q3t5d04gg5p80zp0nkkjm0000gn/T/cursor-sandbox-cache/b00d64ec765eca042f6d1637ecc3589c/nuget/microsoft.aspnetcore.app.ref/8.0.22/microsoft.aspnetcore.app.ref.8.0.22.nupkg.sha512",
+    "/var/folders/w0/703q3t5d04gg5p80zp0nkkjm0000gn/T/cursor-sandbox-cache/b00d64ec765eca042f6d1637ecc3589c/nuget/microsoft.netcore.app.host.osx-arm64/8.0.22/microsoft.netcore.app.host.osx-arm64.8.0.22.nupkg.sha512"
+  ],
+  "logs": [
+    {
+      "code": "NU1900",
+      "level": "Warning",
+      "message": "Error occurred while getting package vulnerability data: Access to the path '/Users/josediaz/.local/share/NuGet/http-cache/670c1461c29885f9aa22c281d8b7da90845b38e4$ps:_api.nuget.org_v3_index.json/vuln_index.dat-new' is denied.",
+      "projectPath": "/Users/josediaz/Projects/cas-training/seguridad-java-net/sesion2-lab/aspnet-identity-keycloak/identity-demo/IdentityDemo.csproj",
+      "warningLevel": 1,
+      "filePath": "/Users/josediaz/Projects/cas-training/seguridad-java-net/sesion2-lab/aspnet-identity-keycloak/identity-demo/IdentityDemo.csproj",
+      "targetGraphs": []
+    }
+  ]
+}

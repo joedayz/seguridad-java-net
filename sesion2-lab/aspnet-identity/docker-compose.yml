@@ -1,0 +1,35 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: identity-postgres
+    environment:
+      POSTGRES_DB: identitydemo
+      POSTGRES_USER: demo
+      POSTGRES_PASSWORD: demo
+    ports:
+      - "5433:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U demo -d identitydemo"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  identity-demo:
+    build: ./identity-demo
+    container_name: identity-demo
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      ASPNETCORE_ENVIRONMENT: Development
+      ConnectionStrings__DefaultConnection: Host=postgres;Port=5432;Database=identitydemo;Username=demo;Password=demo
+      Jwt__Key: DemoIdentityJwtSigningKey2026MustBeAtLeast32Chars!
+      Jwt__Issuer: IdentityDemo
+      Jwt__Audience: IdentityDemo
+    ports:
+      - "8082:8082"
+
+volumes:
+  postgres_data:

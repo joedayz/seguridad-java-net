@@ -1,0 +1,28 @@
+services:
+  keycloak:
+    image: quay.io/keycloak/keycloak:26.0
+    container_name: keycloak
+    command:
+      - start-dev
+      - --import-realm
+    environment:
+      KC_BOOTSTRAP_ADMIN_USERNAME: admin
+      KC_BOOTSTRAP_ADMIN_PASSWORD: admin
+      KC_HEALTH_ENABLED: "true"
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./keycloak/realm-export.json:/opt/keycloak/data/import/realm-export.json:ro
+
+  resource-server:
+    build: ./resource-server
+    container_name: resource-server
+    depends_on:
+      - keycloak
+    environment:
+      # Las claves se descargan por la red interna del compose (servicio "keycloak").
+      JWK_SET_URI: http://keycloak:8080/realms/demo/protocol/openid-connect/certs
+      # El issuer DEBE coincidir con el "iss" del token, que los clientes obtienen via localhost:8080.
+      ISSUER_URI: http://localhost:8080/realms/demo
+    ports:
+      - "8081:8081"

@@ -1,0 +1,20 @@
+server:
+  port: 8081
+
+spring:
+  application:
+    name: resource-server
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          # Donde el resource server descarga las claves publicas para validar la firma.
+          # En local apunta a localhost; en docker-compose se sobreescribe a http://keycloak:8080
+          jwk-set-uri: ${JWK_SET_URI:http://localhost:8080/realms/demo/protocol/openid-connect/certs}
+          # El issuer que debe coincidir con el claim "iss" del token (siempre localhost, que es
+          # como los clientes piden el token).
+          issuer-uri: ${ISSUER_URI:http://localhost:8080/realms/demo}
+
+logging:
+  level:
+    org.springframework.security: INFO

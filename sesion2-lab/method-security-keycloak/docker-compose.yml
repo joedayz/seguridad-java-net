@@ -1,0 +1,27 @@
+services:
+  keycloak:
+    image: quay.io/keycloak/keycloak:26.0
+    container_name: keycloak-method-security
+    command:
+      - start-dev
+      - --import-realm
+    environment:
+      KC_BOOTSTRAP_ADMIN_USERNAME: admin
+      KC_BOOTSTRAP_ADMIN_PASSWORD: admin
+      KC_HEALTH_ENABLED: "true"
+      KC_HTTP_PORT: "8090"
+    ports:
+      - "8090:8090"
+    volumes:
+      - ./keycloak/realm-export.json:/opt/keycloak/data/import/realm-export.json:ro
+
+  resource-server:
+    build: ./resource-server
+    container_name: method-security-rs
+    depends_on:
+      - keycloak
+    environment:
+      JWK_SET_URI: http://keycloak:8090/realms/demo/protocol/openid-connect/certs
+      ISSUER_URI: http://localhost:8090/realms/demo
+    ports:
+      - "8086:8086"

@@ -13,6 +13,7 @@ spring:
           jwk-set-uri: ${JWK_SET_URI:http://localhost:8080/realms/demo/protocol/openid-connect/certs}
           # El issuer que debe coincidir con el claim "iss" del token (siempre localhost, que es
           # como los clientes piden el token).
+          # Spring consulta automaticamente: http://localhost:8080/realms/demo/.well-known/openid-configuration
           issuer-uri: ${ISSUER_URI:http://localhost:8080/realms/demo}
 
 logging:

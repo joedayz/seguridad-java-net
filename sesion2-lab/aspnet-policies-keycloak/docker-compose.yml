@@ -1,0 +1,29 @@
+services:
+  keycloak:
+    image: quay.io/keycloak/keycloak:26.0
+    container_name: keycloak-aspnet-policies
+    command:
+      - start-dev
+      - --import-realm
+    environment:
+      KC_BOOTSTRAP_ADMIN_USERNAME: admin
+      KC_BOOTSTRAP_ADMIN_PASSWORD: admin
+      KC_HEALTH_ENABLED: "true"
+      KC_HTTP_PORT: "8091"
+    ports:
+      - "8091:8091"
+    volumes:
+      - ./keycloak/realm-export.json:/opt/keycloak/data/import/realm-export.json:ro
+
+  policies-demo:
+    build: ./policies-demo
+    container_name: aspnet-policies-demo
+    restart: on-failure
+    depends_on:
+      - keycloak
+    environment:
+      ASPNETCORE_ENVIRONMENT: Development
+      Keycloak__MetadataAddress: http://keycloak:8091/realms/demo/.well-known/openid-configuration
+      Keycloak__Issuer: http://localhost:8091/realms/demo
+    ports:
+      - "8087:8087"

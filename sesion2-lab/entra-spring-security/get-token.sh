@@ -39,8 +39,35 @@ if [[ -z "$DEVICE_CODE" ]]; then
   exit 1
 fi
 
-echo "Abre ${VERIFICATION_URI:-https://microsoft.com/devicelogin}" >&2
-echo "Introduce el codigo: ${USER_CODE}" >&2
+LOGIN_URI="${VERIFICATION_URI:-https://microsoft.com/devicelogin}"
+
+open_browser() {
+  local url="$1"
+  if [[ "$(uname -s)" == "Darwin" ]] && command -v open >/dev/null 2>&1; then
+    open "$url" >/dev/null 2>&1 && return 0
+  fi
+  if command -v xdg-open >/dev/null 2>&1; then
+    xdg-open "$url" >/dev/null 2>&1 && return 0
+  fi
+  if command -v wslview >/dev/null 2>&1; then
+    wslview "$url" >/dev/null 2>&1 && return 0
+  fi
+  return 1
+}
+
+echo "" >&2
+echo "=== Inicio de sesion (device code) ===" >&2
+echo "Este flujo NO abre el navegador solo a menos que el script pueda lanzarlo." >&2
+echo "URL:    ${LOGIN_URI}" >&2
+echo "Codigo: ${USER_CODE}" >&2
+echo "" >&2
+
+if open_browser "$LOGIN_URI"; then
+  echo "Se abrio el navegador. Introduce el codigo si la pagina no lo muestra ya." >&2
+else
+  echo "Abre manualmente: ${LOGIN_URI}" >&2
+  echo "e introduce el codigo: ${USER_CODE}" >&2
+fi
 echo "Esperando autenticacion..." >&2
 
 while true; do

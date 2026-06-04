@@ -1,0 +1,105 @@
+{
+  "realm": "demo",
+  "enabled": true,
+  "displayName": "ASP.NET Policies Demo",
+  "accessTokenLifespan": 3600,
+  "roles": {
+    "realm": [
+      { "name": "Developer", "description": "Developer role for authorization policies" },
+      { "name": "ADMIN", "description": "Administrator role" },
+      { "name": "USER", "description": "Standard user role" }
+    ]
+  },
+  "clients": [
+    {
+      "clientId": "demo-client",
+      "name": "Demo Client",
+      "enabled": true,
+      "protocol": "openid-connect",
+      "publicClient": false,
+      "secret": "demo-secret",
+      "standardFlowEnabled": true,
+      "directAccessGrantsEnabled": true,
+      "serviceAccountsEnabled": false,
+      "fullScopeAllowed": true,
+      "redirectUris": ["*"],
+      "webOrigins": ["*"],
+      "protocolMappers": [
+        {
+          "name": "seniority-mapper",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-usermodel-attribute-mapper",
+          "consentRequired": false,
+          "config": {
+            "user.attribute": "seniority",
+            "claim.name": "seniority",
+            "jsonType.label": "String",
+            "id.token.claim": "true",
+            "access.token.claim": "true",
+            "userinfo.token.claim": "true"
+          }
+        },
+        {
+          "name": "department-mapper",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-usermodel-attribute-mapper",
+          "consentRequired": false,
+          "config": {
+            "user.attribute": "department",
+            "claim.name": "department",
+            "jsonType.label": "String",
+            "id.token.claim": "true",
+            "access.token.claim": "true",
+            "userinfo.token.claim": "true"
+          }
+        }
+      ]
+    }
+  ],
+  "users": [
+    {
+      "username": "carol",
+      "enabled": true,
+      "emailVerified": true,
+      "email": "carol@example.com",
+      "firstName": "Carol",
+      "lastName": "SeniorDev",
+      "attributes": {
+        "seniority": ["senior"],
+        "department": ["engineering"]
+      },
+      "credentials": [
+        { "type": "password", "value": "password", "temporary": false }
+      ],
+      "realmRoles": ["Developer"]
+    },
+    {
+      "username": "dave",
+      "enabled": true,
+      "emailVerified": true,
+      "email": "dave@example.com",
+      "firstName": "Dave",
+      "lastName": "JuniorDev",
+      "attributes": {
+        "seniority": ["junior"],
+        "department": ["engineering"]
+      },
+      "credentials": [
+        { "type": "password", "value": "password", "temporary": false }
+      ],
+      "realmRoles": ["Developer"]
+    },
+    {
+      "username": "alice",
+      "enabled": true,
+      "emailVerified": true,
+      "email": "alice@example.com",
+      "firstName": "Alice",
+      "lastName": "Admin",
+      "credentials": [
+        { "type": "password", "value": "password", "temporary": false }
+      ],
+      "realmRoles": ["ADMIN", "USER"]
+    }
+  ]
+}

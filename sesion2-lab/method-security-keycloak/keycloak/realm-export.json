@@ -1,0 +1,54 @@
+{
+  "realm": "demo",
+  "enabled": true,
+  "displayName": "Method Security Demo",
+  "accessTokenLifespan": 3600,
+  "roles": {
+    "realm": [
+      { "name": "ADMIN", "description": "Administrator role" },
+      { "name": "USER", "description": "Standard user role" }
+    ]
+  },
+  "clients": [
+    {
+      "clientId": "demo-client",
+      "name": "Demo Client",
+      "enabled": true,
+      "protocol": "openid-connect",
+      "publicClient": false,
+      "secret": "demo-secret",
+      "standardFlowEnabled": true,
+      "directAccessGrantsEnabled": true,
+      "serviceAccountsEnabled": false,
+      "fullScopeAllowed": true,
+      "redirectUris": ["*"],
+      "webOrigins": ["*"]
+    }
+  ],
+  "users": [
+    {
+      "username": "alice",
+      "enabled": true,
+      "emailVerified": true,
+      "email": "alice@example.com",
+      "firstName": "Alice",
+      "lastName": "Admin",
+      "credentials": [
+        { "type": "password", "value": "password", "temporary": false }
+      ],
+      "realmRoles": ["ADMIN", "USER"]
+    },
+    {
+      "username": "bob",
+      "enabled": true,
+      "emailVerified": true,
+      "email": "bob@example.com",
+      "firstName": "Bob",
+      "lastName": "User",
+      "credentials": [
+        { "type": "password", "value": "password", "temporary": false }
+      ],
+      "realmRoles": ["USER"]
+    }
+  ]
+}

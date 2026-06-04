@@ -1,0 +1,16 @@
+server:
+  port: 8088
+
+spring:
+  application:
+    name: pkce-resource-server
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          jwk-set-uri: ${JWK_SET_URI:http://localhost:8092/realms/demo/protocol/openid-connect/certs}
+          issuer-uri: ${ISSUER_URI:http://localhost:8092/realms/demo}
+
+logging:
+  level:
+    org.springframework.security: INFO

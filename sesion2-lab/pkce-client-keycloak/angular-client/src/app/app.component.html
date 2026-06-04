@@ -1,0 +1,57 @@
+<main class="layout">
+  <header>
+    <h1>Ejercicio 2 — Authorization Code + PKCE</h1>
+    <p class="subtitle">
+      Cliente Angular · Keycloak · Resource Server Spring Boot
+    </p>
+  </header>
+
+  <section class="card">
+    <h2>URLs de la demo</h2>
+    <ul class="urls">
+      <li><strong>SPA (esta app):</strong> <a href="http://localhost:8093" target="_blank">http://localhost:8093</a></li>
+      <li><strong>Keycloak:</strong> <a [href]="keycloakUrl" target="_blank">{{ keycloakUrl }}</a></li>
+      <li><strong>Resource Server:</strong> <a [href]="apiBaseUrl + '/api/public/hello'" target="_blank">{{ apiBaseUrl }}</a></li>
+      <li><strong>Consola Keycloak:</strong> <a href="http://localhost:8092/admin" target="_blank">http://localhost:8092/admin</a> (admin / admin)</li>
+    </ul>
+  </section>
+
+  <section class="card">
+    <h2>Sesion OIDC (PKCE)</h2>
+    <p class="hint">
+      El flujo usa <code>responseType=code</code> con PKCE (S256). Tras iniciar sesion, el interceptor
+      envia <code>Authorization: Bearer &lt;token&gt;</code> al API.
+    </p>
+    <div class="actions">
+      @if (!loggedIn) {
+        <button class="primary" type="button" (click)="login()">Iniciar sesion en Keycloak</button>
+      } @else {
+        <span class="status-ok">Conectado como <strong>{{ username }}</strong></span>
+        <button class="secondary" type="button" (click)="logout()">Cerrar sesion</button>
+      }
+    </div>
+    @if (accessTokenPreview) {
+      <p class="token-preview">Access token: <code>{{ accessTokenPreview }}</code></p>
+    }
+  </section>
+
+  <section class="card">
+    <h2>Probar Resource Server</h2>
+    <p class="hint">Usuarios en Keycloak: <code>alice</code> / <code>password</code> (ADMIN), <code>bob</code> / <code>password</code> (USER)</p>
+    <div class="actions">
+      <button class="secondary" type="button" [disabled]="loading" (click)="callApi('/api/public/hello', false)">
+        GET /api/public/hello
+      </button>
+      <button class="secondary" type="button" [disabled]="loading || !loggedIn" (click)="callApi('/api/me', true)">
+        GET /api/me
+      </button>
+      <button class="secondary" type="button" [disabled]="loading || !loggedIn" (click)="callApi('/api/admin/hello', true)">
+        GET /api/admin/hello
+      </button>
+    </div>
+    @if (lastStatus) {
+      <p [class]="lastStatus.startsWith('200') ? 'status-ok' : 'status-err'">{{ lastStatus }}</p>
+      <pre>{{ lastResponse }}</pre>
+    }
+  </section>
+</main>

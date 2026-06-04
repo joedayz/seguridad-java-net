@@ -7,6 +7,7 @@
       <list>
         <option value="$PROJECT_DIR$/sesion2-lab/spring-security/resource-server/pom.xml" />
         <option value="$PROJECT_DIR$/sesion2-lab/entra-spring-security/resource-server/pom.xml" />
+        <option value="$PROJECT_DIR$/sesion2-lab/method-security-keycloak/resource-server/pom.xml" />
       </list>
     </option>
   </component>

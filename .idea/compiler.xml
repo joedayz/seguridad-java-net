@@ -8,12 +8,14 @@
         <outputRelativeToContentRoot value="true" />
         <module name="resource-server" />
         <module name="entra-resource-server" />
+        <module name="method-security-rs" />
       </profile>
     </annotationProcessing>
   </component>
   <component name="JavacSettings">
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
       <module name="entra-resource-server" options="-parameters" />
+      <module name="method-security-rs" options="-parameters" />
       <module name="resource-server" options="-parameters" />
     </option>
   </component>

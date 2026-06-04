@@ -1,0 +1,36 @@
+services:
+  keycloak:
+    image: quay.io/keycloak/keycloak:26.0
+    container_name: keycloak-pkce-angular
+    command:
+      - start-dev
+      - --import-realm
+    environment:
+      KC_BOOTSTRAP_ADMIN_USERNAME: admin
+      KC_BOOTSTRAP_ADMIN_PASSWORD: admin
+      KC_HEALTH_ENABLED: "true"
+      KC_HTTP_PORT: "8092"
+    ports:
+      - "8092:8092"
+    volumes:
+      - ./keycloak/realm-export.json:/opt/keycloak/data/import/realm-export.json:ro
+
+  resource-server:
+    build: ./resource-server
+    container_name: pkce-resource-server
+    depends_on:
+      - keycloak
+    environment:
+      JWK_SET_URI: http://keycloak:8092/realms/demo/protocol/openid-connect/certs
+      ISSUER_URI: http://localhost:8092/realms/demo
+    ports:
+      - "8088:8088"
+
+  angular-client:
+    build: ./angular-client
+    container_name: angular-pkce-client
+    depends_on:
+      - keycloak
+      - resource-server
+    ports:
+      - "8093:8093"

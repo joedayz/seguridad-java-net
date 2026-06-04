@@ -9,8 +9,9 @@
 | [entra-aspnet](entra-aspnet) | ASP.NET Core + **Microsoft Entra ID** | 8084 |
 | [method-security-keycloak](method-security-keycloak) | Spring **Method Security** (`@PreAuthorize` / `@PostAuthorize`) + Keycloak | 8086 |
 | [aspnet-policies-keycloak](aspnet-policies-keycloak) | ASP.NET **Authorization Policies** (rol + claims) + Keycloak | 8087 |
+| [pkce-client-keycloak](pkce-client-keycloak) | **Angular SPA** + PKCE + Keycloak + Resource Server (ejercicio 2) | SPA 8093 · API 8088 |
 
-Keycloak en las demos avanzadas usa puertos **8090** y **8091** (no chocan con `spring-security` en 8080).
+Keycloak en las demos avanzadas usa puertos **8090–8092** (no chocan con `spring-security` en 8080).
 
 Las demos **Entra ID** comparten la misma configuración en Azure Portal (ver README de `entra-spring-security`).
 

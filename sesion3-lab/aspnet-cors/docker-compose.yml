@@ -1,0 +1,28 @@
+services:
+  cors-demo:
+    build: ./cors-demo
+    container_name: cors-demo
+    environment:
+      ASPNETCORE_ENVIRONMENT: Development
+      Cors__DevelopmentOrigin: "http://localhost:8194"
+      Cors__ProductionOrigin: "https://app.midominio.com"
+    ports:
+      - "8184:8184"
+
+  client-dev:
+    image: nginx:alpine
+    container_name: cors-client-dev
+    volumes:
+      - ./clients:/usr/share/nginx/html:ro
+      - ./clients/nginx.conf:/etc/nginx/conf.d/default.conf:ro
+    ports:
+      - "8194:80"
+
+  client-blocked:
+    image: nginx:alpine
+    container_name: cors-client-blocked-aspnet
+    volumes:
+      - ./clients:/usr/share/nginx/html:ro
+      - ./clients/nginx.conf:/etc/nginx/conf.d/default.conf:ro
+    ports:
+      - "8197:80"

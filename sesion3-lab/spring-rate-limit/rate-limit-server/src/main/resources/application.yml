@@ -1,0 +1,18 @@
+server:
+  port: 8181
+
+spring:
+  application:
+    name: rate-limit-server
+
+# Parametros del rate limiting (token-bucket de Bucket4j).
+# Valores bajos para que el 429 sea facil de provocar en una demo en vivo.
+# La diapositiva usa 100 peticiones/minuto; aqui 5/minuto.
+ratelimit:
+  capacity: ${RATELIMIT_CAPACITY:5}
+  refill-tokens: ${RATELIMIT_REFILL_TOKENS:5}
+  refill-period-seconds: ${RATELIMIT_REFILL_PERIOD_SECONDS:60}
+
+logging:
+  level:
+    com.example.demo: INFO

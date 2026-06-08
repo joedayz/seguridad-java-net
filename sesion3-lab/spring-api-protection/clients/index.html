@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CORS + HTTPS — Cliente</title>
+  <style>
+    :root { font-family: system-ui, sans-serif; line-height: 1.5; }
+    body { max-width: 44rem; margin: 2rem auto; padding: 0 1rem; }
+    code { background: #f4f4f5; padding: 0.1rem 0.35rem; border-radius: 4px; }
+    button { margin: 0.25rem 0.5rem 0.25rem 0; padding: 0.5rem 1rem; cursor: pointer; }
+    pre { background: #111827; color: #e5e7eb; padding: 1rem; border-radius: 8px; min-height: 4rem; overflow-x: auto; }
+    .hint { color: #4b5563; font-size: 0.95rem; }
+    .ok { color: #166534; }
+    .err { color: #b91c1c; }
+  </style>
+</head>
+<body>
+  <h1>Cliente — Ejercicio 1 (CORS + HTTPS)</h1>
+  <p class="hint">
+    Origen: <code id="origin"></code> · API: <code id="api"></code><br>
+    Acepta el certificado autofirmado visitando primero
+    <a href="https://localhost:8443/" target="_blank" rel="noopener">https://localhost:8443</a>.
+  </p>
+  <button type="button" id="public">GET /api/public/health</button>
+  <button type="button" id="auth">GET /api/datos (X-Api-Key)</button>
+  <pre id="out">Pulsa un botón…</pre>
+
+  <script>
+    const API = 'https://localhost:8443';
+    const API_KEY = 'demo-user';
+    document.getElementById('origin').textContent = window.location.origin;
+    document.getElementById('api').textContent = API;
+
+    async function call(path, options = {}) {
+      const out = document.getElementById('out');
+      out.textContent = 'Llamando ' + path + '…';
+      try {
+        const r = await fetch(API + path, { credentials: 'include', ...options });
+        const text = await r.text();
+        let body;
+        try { body = JSON.parse(text); } catch { body = text; }
+        out.innerHTML = '<span class="ok">HTTP ' + r.status + '</span>\n' + JSON.stringify(body, null, 2);
+      } catch (e) {
+        out.innerHTML = '<span class="err">Error CORS / red / certificado</span>\n' + e.message;
+      }
+    }
+
+    document.getElementById('public').addEventListener('click', () => call('/api/public/health'));
+    document.getElementById('auth').addEventListener('click', () => call('/api/datos', {
+      headers: { 'X-Api-Key': API_KEY }
+    }));
+  </script>
+</body>
+</html>

@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CORS Demo — Cliente ASP.NET</title>
+  <style>
+    :root { font-family: system-ui, sans-serif; line-height: 1.5; }
+    body { max-width: 42rem; margin: 2rem auto; padding: 0 1rem; }
+    code { background: #f4f4f5; padding: 0.1rem 0.35rem; border-radius: 4px; }
+    button { margin-right: 0.5rem; margin-bottom: 0.5rem; padding: 0.5rem 1rem; cursor: pointer; }
+    pre { background: #111827; color: #e5e7eb; padding: 1rem; border-radius: 8px; overflow-x: auto; min-height: 4rem; }
+    .ok { color: #166534; }
+    .err { color: #b91c1c; }
+    .hint { color: #4b5563; font-size: 0.95rem; }
+  </style>
+</head>
+<body>
+  <h1>Cliente CORS (ASP.NET API)</h1>
+  <p class="hint">
+    En <strong>Development</strong> la política <code>PoliticaDesarrollo</code> permite
+    <code>http://localhost:8194</code>. Abrí también <code>:8197</code> para ver el bloqueo.
+  </p>
+  <p>Origen actual: <code id="origin"></code></p>
+  <p>API: <code id="api-url"></code></p>
+  <button type="button" id="btn-get">GET /api/datos</button>
+  <button type="button" id="btn-post">POST /api/datos</button>
+  <pre id="output">Pulsa un botón para llamar a la API…</pre>
+
+  <script>
+    const API_URL = 'http://localhost:8184/api/datos';
+    const originEl = document.getElementById('origin');
+    const apiEl = document.getElementById('api-url');
+    const output = document.getElementById('output');
+
+    originEl.textContent = window.location.origin;
+    apiEl.textContent = API_URL;
+
+    function showOk(label, data) {
+      output.innerHTML = '<span class="ok">' + label + '</span>\n' + JSON.stringify(data, null, 2);
+    }
+
+    function showErr(label, err) {
+      output.innerHTML = '<span class="err">' + label + '</span>\n' + (err && err.message ? err.message : String(err));
+    }
+
+    document.getElementById('btn-get').addEventListener('click', async () => {
+      output.textContent = 'Llamando GET…';
+      try {
+        const response = await fetch(API_URL, { credentials: 'include' });
+        const body = await response.json();
+        if (!response.ok) throw new Error('HTTP ' + response.status);
+        showOk('CORS OK — respuesta ' + response.status, body);
+      } catch (err) {
+        showErr('Bloqueado por CORS o error de red', err);
+      }
+    });
+
+    document.getElementById('btn-post').addEventListener('click', async () => {
+      output.textContent = 'Llamando POST…';
+      try {
+        const response = await fetch(API_URL, {
+          method: 'POST',
+          credentials: 'include',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ demo: true, from: window.location.origin })
+        });
+        const body = await response.json();
+        if (!response.ok) throw new Error('HTTP ' + response.status);
+        showOk('CORS OK — respuesta ' + response.status, body);
+      } catch (err) {
+        showErr('Bloqueado por CORS o error de red', err);
+      }
+    });
+  </script>
+</body>
+</html>

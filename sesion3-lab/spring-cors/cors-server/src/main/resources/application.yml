@@ -1,0 +1,18 @@
+server:
+  port: 8183
+
+spring:
+  application:
+    name: cors-server
+
+# Origenes permitidos (lista separada por comas).
+# En la diapositiva: https://app.midominio.com, https://admin.midominio.com
+# Para la demo local usamos localhost; en produccion cambiad los valores.
+cors:
+  allowed-origins: ${CORS_ALLOWED_ORIGINS:http://localhost:8193,http://localhost:8195}
+  allowed-methods: ${CORS_ALLOWED_METHODS:GET,POST}
+  max-age-seconds: ${CORS_MAX_AGE_SECONDS:3600}
+
+logging:
+  level:
+    com.example.demo: INFO

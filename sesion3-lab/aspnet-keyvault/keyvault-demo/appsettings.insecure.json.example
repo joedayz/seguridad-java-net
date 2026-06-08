@@ -1,0 +1,10 @@
+{
+  "_comment": "ANTES (Ejercicio 2): NUNCA commitear este archivo con valores reales.",
+  "ConnectionStrings": {
+    "Default": "Server=prod-db.empresa.com;Database=AppDB;User Id=admin;Password=Sup3rS3cr3t!;"
+  },
+  "ApiKeys": {
+    "Stripe": "sk_live_123abc...",
+    "SendGrid": "SG.xxx..."
+  }
+}

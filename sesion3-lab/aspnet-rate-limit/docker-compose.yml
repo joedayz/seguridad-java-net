@@ -1,0 +1,10 @@
+services:
+  ratelimit-demo:
+    build: ./ratelimit-demo
+    container_name: ratelimit-demo
+    environment:
+      # Limite por defecto: 5 peticiones por ventana de 60s (facil de provocar el 429).
+      RateLimit__PermitLimit: "5"
+      RateLimit__WindowSeconds: "60"
+    ports:
+      - "8182:8182"

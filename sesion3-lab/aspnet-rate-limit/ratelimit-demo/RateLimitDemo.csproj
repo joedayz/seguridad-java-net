@@ -1,0 +1,14 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <RootNamespace>RateLimitDemo</RootNamespace>
+    <AssemblyName>RateLimitDemo</AssemblyName>
+  </PropertyGroup>
+
+  <!-- El middleware de rate limiting es nativo desde .NET 7 (Microsoft.AspNetCore.RateLimiting),
+       forma parte del framework compartido: no requiere paquetes NuGet adicionales. -->
+
+</Project>

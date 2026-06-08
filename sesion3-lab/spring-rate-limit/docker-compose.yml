@@ -1,0 +1,11 @@
+services:
+  rate-limit-server:
+    build: ./rate-limit-server
+    container_name: rate-limit-server
+    environment:
+      # Limite por defecto: 5 peticiones por minuto (facil de provocar el 429 en una demo).
+      RATELIMIT_CAPACITY: "5"
+      RATELIMIT_REFILL_TOKENS: "5"
+      RATELIMIT_REFILL_PERIOD_SECONDS: "60"
+    ports:
+      - "8181:8181"

@@ -1,0 +1,44 @@
+package com.example.demo.config;
+
+import java.time.Duration;
+import java.util.Arrays;
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+
+/**
+ * CORS restrictivo por entorno (paso 03 del ejercicio).
+ */
+@Configuration
+public class CorsConfig {
+
+    @Bean
+    public CorsConfigurationSource corsConfigurationSource(
+            @Value("${cors.allowed-origins}") String allowedOrigins,
+            @Value("${cors.allowed-methods:GET,POST,PUT}") String allowedMethods,
+            @Value("${cors.max-age-seconds:3600}") long maxAgeSeconds) {
+
+        CorsConfiguration config = new CorsConfiguration();
+        config.setAllowedOrigins(splitCsv(allowedOrigins));
+        config.setAllowedMethods(splitCsv(allowedMethods));
+        config.setAllowedHeaders(List.of("Authorization", "Content-Type", "X-Api-Key"));
+        config.setAllowCredentials(true);
+        config.setMaxAge(Duration.ofSeconds(maxAgeSeconds));
+
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/api/**", config);
+        return source;
+    }
+
+    private static List<String> splitCsv(String csv) {
+        return Arrays.stream(csv.split(","))
+                .map(String::trim)
+                .filter(s -> !s.isEmpty())
+                .toList();
+    }
+}

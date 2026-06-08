@@ -1,0 +1,5 @@
+target/
+**/keystore.p12
+certs/*.p12
+certs/*.pem
+!certs/.gitkeep

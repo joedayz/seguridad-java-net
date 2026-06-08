@@ -9,7 +9,10 @@ spring:
       resourceserver:
         jwt:
           issuer-uri: https://login.microsoftonline.com/${AZURE_TENANT_ID}/v2.0
-          audiences: ${AZURE_API_AUDIENCE:api://${AZURE_API_CLIENT_ID}}
+          # Entra puede emitir aud como api://<id> o solo el GUID del client ID de la API
+          audiences:
+            - ${AZURE_API_AUDIENCE:api://${AZURE_API_CLIENT_ID}}
+            - ${AZURE_API_CLIENT_ID}
 
 logging:
   level:

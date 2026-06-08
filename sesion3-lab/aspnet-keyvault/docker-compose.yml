@@ -1,0 +1,16 @@
+services:
+  keyvault-demo:
+    build: ./keyvault-demo
+    container_name: keyvault-demo
+    env_file:
+      - path: .env
+        required: true
+    environment:
+      KeyVault__Uri: ${KEY_VAULT_URI:?Define KEY_VAULT_URI en .env}
+      AZURE_TENANT_ID: ${AZURE_TENANT_ID:?Define AZURE_TENANT_ID en .env}
+      # DefaultAzureCredential en contenedor: service principal (opcional en .env)
+      AZURE_CLIENT_ID: ${AZURE_CLIENT_ID:-}
+      AZURE_CLIENT_SECRET: ${AZURE_CLIENT_SECRET:-}
+      ASPNETCORE_ENVIRONMENT: Development
+    ports:
+      - "8085:8085"

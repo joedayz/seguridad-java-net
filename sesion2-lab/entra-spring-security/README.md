@@ -89,7 +89,8 @@ AZURE_SCOPE=api://11111111-2222-3333-4444-555555555555/access_as_user
 ```
 
 > **Audience**: el claim `aud` del token debe coincidir con `AZURE_API_AUDIENCE`
-> (normalmente el Application ID URI de la API).
+> (normalmente el Application ID URI de la API). Entra a veces emite `aud` como GUID sin
+> prefijo `api://`; el servidor acepta ambos formatos automáticamente.
 
 ---
 
@@ -257,4 +258,7 @@ Inspeccionar JWT: https://jwt.ms
   alineado con cuentas reales de Entra.
 - Si el token no trae `roles`, revisa la asignación en **Enterprise applications** y que el
   scope en `.env` apunte a tu API (`api://.../access_as_user`).
+- **401 `aud claim is not valid`**: decodifica el token en https://jwt.ms y comprueba el
+  claim `aud`. Debe coincidir con `AZURE_API_CLIENT_ID` o con `AZURE_API_AUDIENCE`. Tras
+  cambiar `.env` o `application.yml`, reconstruye: `./compose.sh up --build`.
 - Para depurar el JWT: [jwt.ms](https://jwt.ms).

@@ -39,15 +39,17 @@ estática en `application.yml`.
 
 ## Cómo levantarlo (un solo comando)
 
-El contenedor `vault-init` configura Vault automáticamente (motor de BD, rol dinámico y
-AppRole con `role-id`/`secret-id` fijos), así que no hay pasos manuales:
+El propio contenedor de **Vault se autoconfigura al arrancar** (`vault/entrypoint.sh` →
+`vault/setup.sh`): habilita el motor de BD, crea el rol dinámico y el AppRole con
+`role-id`/`secret-id` fijos. No hay pasos manuales:
 
 ```bash
 cd sesion3-lab/spring-keyvault
 ./compose.sh up --build
 ```
 
-Espera a que aparezca `spring-vault-init ... exited (0)` y luego `spring-vault-app` arrancado.
+El `app` espera (vía healthcheck) a que `spring-vault` quede **healthy**, lo que solo ocurre
+cuando la configuración terminó. Funciona igual con `docker compose` y con `podman-compose`.
 
 ### Windows — cmd (sin PowerShell)
 
@@ -107,8 +109,9 @@ Cada usuario `v-approle-app-role-...` tiene un `rolvaliduntil` ~1 hora en el fut
 
 | Pieza | Archivo | Rol |
 |-------|---------|-----|
-| Orquestación | `docker-compose.yml` | Vault + PostgreSQL + init + app |
-| Configuración de Vault | `vault/setup.sh` | Habilita motor `database`, crea rol `app-role` (TTL 1h) y AppRole `spring-app` |
+| Orquestación | `docker-compose.yml` | PostgreSQL + Vault (autoconfigurado) + app |
+| Arranque de Vault | `vault/entrypoint.sh` | Lanza Vault dev y dispara la configuración en el mismo contenedor |
+| Configuración de Vault | `vault/setup.sh` (y `vault/setup.ps1` manual) | Habilita motor `database`, crea rol `app-role` (TTL 1h) y AppRole `spring-app` |
 | Política mínima | `vault/app-policy.hcl` | Solo permite leer `database/creds/app-role` |
 | Datos demo | `postgres/init.sql` | Tabla `products` (los roles dinámicos solo tienen `SELECT`) |
 | Arranque Spring | `app/src/main/resources/bootstrap.yml` | Login AppRole + motor `database` de Spring Cloud Vault |

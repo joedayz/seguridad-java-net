@@ -51,10 +51,11 @@ vault write auth/approle/role/spring-app \
   secret_id_ttl=0
 
 # 5) role-id y secret-id FIJOS (los mismos que el .env consume la app).
-#    Idempotente: si ya estaban registrados (re-ejecucion), no es un error.
+#    Idempotente y SIN ruido: borramos el secret-id previo (si existe) y lo recreamos,
+#    asi una re-ejecucion no provoca el error 500 "SecretID is already registered".
 vault write auth/approle/role/spring-app/role-id role_id="$ROLE_ID"
-vault write auth/approle/role/spring-app/custom-secret-id secret_id="$SECRET_ID" \
-  || echo "[vault-init] secret-id ya registrado, se reutiliza"
+vault write auth/approle/role/spring-app/secret-id/destroy secret_id="$SECRET_ID" >/dev/null 2>&1 || true
+vault write auth/approle/role/spring-app/custom-secret-id secret_id="$SECRET_ID" >/dev/null
 
 echo "[vault-init] AppRole 'spring-app' listo."
 echo "[vault-init]   VAULT_ROLE_ID=$ROLE_ID"

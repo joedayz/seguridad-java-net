@@ -38,9 +38,10 @@ Busca secretos en el repo (no deben existir en código commiteado):
 
 ```bash
 # Ejemplos del material
-git secrets --scan
+gitleaks detect -v
 # trufflehog filesystem .
 ```
+NOTA: https://github.com/gitleaks/gitleaks
 
 Referencia del **antes**: `keyvault-demo/appsettings.insecure.json.example`
 
@@ -53,6 +54,12 @@ chmod +x scripts/create-keyvault.sh
 ./scripts/create-keyvault.sh
 ```
 
+**PowerShell** (Windows / Azure Cloud Shell):
+
+```powershell
+./scripts/create-keyvault.ps1
+```
+
 El script crea resource group, Key Vault (RBAC), asigna permisos IAM y carga los secretos.
 Al final imprime las líneas para tu `.env`.
 
@@ -62,11 +69,21 @@ Variables opcionales:
 RG=mi-rg LOCATION=westeurope VAULT_NAME=mi-vault-unico ./scripts/create-keyvault.sh
 ```
 
+```powershell
+./scripts/create-keyvault.ps1 -ResourceGroup mi-rg -Location westeurope -VaultName mi-vault-unico
+```
+
 #### Solo secretos (si el vault ya existe)
 
 ```bash
 chmod +x scripts/setup-keyvault-secrets.sh
 ./scripts/setup-keyvault-secrets.sh cas-training-kv-demo
+```
+
+**PowerShell**:
+
+```powershell
+./scripts/setup-keyvault-secrets.ps1 cas-training-kv-demo
 ```
 
 | Nombre en Key Vault | Se mapea a configuración |

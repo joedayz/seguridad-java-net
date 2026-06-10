@@ -1,0 +1,27 @@
+# Spring Cloud Vault arranca en el contexto "bootstrap", ANTES de crear el DataSource.
+# Aqui la app se autentica en Vault con AppRole y pide credenciales dinamicas de BD;
+# Vault devuelve un usuario/clave temporales que se inyectan en spring.datasource.*.
+spring:
+  application:
+    name: spring-vault-demo
+  cloud:
+    vault:
+      uri: ${VAULT_URI:http://localhost:8200}
+      # Falla el arranque si Vault no responde: mejor que correr con datos a medias.
+      fail-fast: true
+      authentication: APPROLE
+      app-role:
+        role-id: ${VAULT_ROLE_ID}
+        secret-id: ${VAULT_SECRET_ID}
+      # No usamos el motor KV de clave/valor en esta demo, solo secretos de BD.
+      kv:
+        enabled: false
+      # Motor "database": Vault crea un usuario PostgreSQL efimero por instancia.
+      database:
+        enabled: true
+        backend: database
+        role: app-role
+      # Renueva el lease automaticamente y rota la credencial al expirar (TTL 1h).
+      config:
+        lifecycle:
+          enabled: true

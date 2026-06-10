@@ -1,0 +1,25 @@
+server:
+  port: ${SERVER_PORT:8086}
+
+spring:
+  datasource:
+    # El host/puerto/base es estatico; usuario y password los inyecta Vault dinamicamente.
+    url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://localhost:5432/appdb}
+    hikari:
+      # La credencial dinamica caduca (TTL): valida la conexion al pedirla del pool.
+      max-lifetime: 600000
+      connection-test-query: SELECT 1
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,vault
+  endpoint:
+    health:
+      show-details: always
+
+logging:
+  level:
+    com.example.demo: INFO
+    org.springframework.vault: INFO

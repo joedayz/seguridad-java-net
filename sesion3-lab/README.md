@@ -26,6 +26,12 @@ Límite por defecto: **5 peticiones/minuto** (configurable; las diapositivas usa
 |---------|-------------|--------|
 | [aspnet-keyvault](aspnet-keyvault) | Secretos en **Azure Key Vault** + `DefaultAzureCredential` (mismo tenant Entra) | 8085 |
 
+## Ejercicio 3 — Secretos dinámicos con Vault (Spring)
+
+| Carpeta | Descripción | Puertos |
+|---------|-------------|---------|
+| [spring-keyvault](spring-keyvault) | Credenciales **dinámicas** de PostgreSQL con **HashiCorp Vault** (Spring Cloud Vault + AppRole, TTL 1h) | API **8086** · Vault 8200 · PostgreSQL 5432 |
+
 ## Ejercicio 1 — Protección API integrada (Spring)
 
 | Carpeta | Descripción | Puertos |

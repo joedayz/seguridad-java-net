@@ -1,0 +1,6 @@
+services:
+  ejercicio3-integrador:
+    build: ./reports-server
+    container_name: ejercicio3-integrador
+    ports:
+      - "8198:8198"

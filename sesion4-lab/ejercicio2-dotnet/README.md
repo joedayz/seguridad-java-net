@@ -40,6 +40,10 @@ Sin comprobar que el usuario autenticado puede ver o editar ese `userId`. Cualqu
 curl -s "http://localhost:8194/api/profile/vulnerable/22222222-2222-2222-2222-222222222222"
 ```
 
+### 3. Missing input validation (bio)
+
+El `PUT` vulnerable acepta `bio` como `string` sin límite. Un payload enorme puede causar DoS o saturar la BD.
+
 ---
 
 ## Corrección (BIEN)
@@ -74,6 +78,12 @@ curl -s -H "X-User-Id: 11111111-1111-1111-1111-111111111111" \
 curl -s -H "X-User-Id: 33333333-3333-3333-3333-333333333333" \
      -H "X-User-Role: Admin" \
   "http://localhost:8194/api/profile/seguro/22222222-2222-2222-2222-222222222222"
+
+# Bio > 500 caracteres → 400 (validacion)
+curl -s -X PUT -H "Content-Type: application/json" \
+  -H "X-User-Id: 11111111-1111-1111-1111-111111111111" \
+  "http://localhost:8194/api/profile/seguro/11111111-1111-1111-1111-111111111111/bio" \
+  -d "\"$(python3 -c 'print("x"*501)')\""
 ```
 
 ```bash

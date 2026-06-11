@@ -37,6 +37,7 @@ http.headers(headers -> headers
 | `Strict-Transport-Security` | Downgrade HTTP (solo HTTPS) |
 | `Content-Security-Policy` | XSS, inyeccion de recursos |
 | CSRF token en cookie | CSRF en apps con sesion/cookie |
+| CORS restrictivo | Solo `https://myapp.com` y `https://admin.myapp.com` en `/api/secure/**` |
 | `STATELESS` | APIs REST con JWT (sin sesion servidor) |
 
 ---
@@ -62,6 +63,11 @@ curl -i http://localhost:8191/api/insecure/check
 
 # Con headers (fijate en X-Frame-Options, Content-Security-Policy, Set-Cookie XSRF-TOKEN...)
 curl -i http://localhost:8191/api/secure/check
+
+# CORS preflight (origen permitido)
+curl -i -X OPTIONS http://localhost:8191/api/secure/check \
+  -H "Origin: https://myapp.com" \
+  -H "Access-Control-Request-Method: GET"
 ```
 
 > **HSTS** solo se envia en conexiones HTTPS. En `http://localhost` no aparecera; el resto si.

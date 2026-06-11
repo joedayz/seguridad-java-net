@@ -35,6 +35,7 @@ public class HeadersCheckController {
             "Strict-Transport-Security", "max-age=31536000; includeSubDomains (solo en HTTPS)",
             "Content-Security-Policy", "default-src 'self'; script-src 'self'; object-src 'none'",
             "CSRF", "CookieCsrfTokenRepository (cookie XSRF-TOKEN)",
+            "CORS", "Origenes: https://myapp.com, https://admin.myapp.com",
             "Sesion", "STATELESS (API REST / JWT)"));
   }
 

@@ -1,11 +1,14 @@
 # Demo Logging seguro — Spring Boot (antes / después)
 
-**No registrar datos sensibles** en logs: contraseñas, tokens JWT, números de tarjeta completos.
+Dos anti-patrones del material de la sesión:
 
-| Variante | Endpoint |
-|----------|----------|
-| **ANTES — vulnerable** | `POST /api/auth/vulnerable/login` |
-| **DESPUÉS — seguro** | `POST /api/auth/seguro/login` |
+1. **Logging de datos sensibles** (contraseñas, JWT, tarjeta)
+2. **Exposición de excepciones** al cliente (stack trace / detalles internos)
+
+| Tema | ANTES — vulnerable | DESPUÉS — seguro |
+|------|-------------------|------------------|
+| Logging | `POST /api/auth/vulnerable/login` | `POST /api/auth/seguro/login` |
+| Errores HTTP | `GET /api/orders/vulnerable/{id}` | `GET /api/orders/seguro/{id}` |
 
 | Servicio | URL |
 |----------|-----|
@@ -75,6 +78,16 @@ curl -s -X POST http://localhost:8195/api/auth/seguro/login \
 ```
 
 → Solo `username`, `cardLast4=****1111` y resultado; sin secretos.
+
+### Errores HTTP (stack trace)
+
+```bash
+# Expone mensaje interno + stack trace completo
+curl -s http://localhost:8195/api/orders/vulnerable/abc | jq .
+
+# Respuesta generica + errorId (detalle solo en logs del servidor)
+curl -s http://localhost:8195/api/orders/seguro/abc | jq .
+```
 
 ---
 

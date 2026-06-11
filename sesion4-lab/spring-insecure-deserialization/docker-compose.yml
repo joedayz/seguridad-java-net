@@ -1,0 +1,6 @@
+services:
+  deserialization-spring-server:
+    build: ./deserialization-server
+    container_name: deserialization-spring-server
+    ports:
+      - "8197:8197"

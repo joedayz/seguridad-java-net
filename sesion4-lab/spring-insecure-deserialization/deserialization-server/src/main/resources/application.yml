@@ -1,0 +1,10 @@
+server:
+  port: 8197
+
+spring:
+  application:
+    name: deserialization-server
+
+logging:
+  level:
+    com.example.deserialization: INFO

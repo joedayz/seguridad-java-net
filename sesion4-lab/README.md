@@ -24,10 +24,12 @@ Cada carpeta tiene su propio **`README.md`** con endpoints, payloads y pruebas p
 | **8192** | Security Headers | [aspnet-security-headers](aspnet-security-headers) | Middleware HTTP |
 | **8193** | Ejercicio 1 — SQLi + XSS | [ejercicio1-java](ejercicio1-java) | Búsqueda de productos |
 | **8194** | Ejercicio 2 — SQLi + BOLA | [ejercicio2-dotnet](ejercicio2-dotnet) | Perfiles con Dapper |
-| **8195** | Logging seguro | [spring-secure-logging](spring-secure-logging) | SLF4J / Logback |
+| **8195** | Logging seguro + errores HTTP | [spring-secure-logging](spring-secure-logging) | SLF4J / `@ControllerAdvice` |
 | **8196** | Logging seguro | [aspnet-secure-logging](aspnet-secure-logging) | `ILogger` |
+| **8197** | Deserialización insegura | [spring-insecure-deserialization](spring-insecure-deserialization) | `ObjectInputStream` vs Jackson |
+| **8198** | Ejercicio integrador | [ejercicio3-integrador](ejercicio3-integrador) | XXE + SQLi + API key + rate limit |
 
-**Requisitos:** Docker Desktop o Podman con `compose`. Puertos **8181–8196** libres en `localhost`.
+**Requisitos:** Docker Desktop o Podman con `compose`. Puertos **8181–8198** libres en `localhost`.
 
 ---
 
@@ -147,13 +149,29 @@ curl -i http://localhost:8192/api/secure/check
 | Ejercicio | Carpeta | Puerto | Vulnerabilidades |
 |-----------|---------|--------|------------------|
 | **1 · Java** — Búsqueda productos | [ejercicio1-java](ejercicio1-java) | 8193 | SQLi + XSS |
-| **2 · .NET** — Perfiles usuario | [ejercicio2-dotnet](ejercicio2-dotnet) | 8194 | SQLi + BOLA/IDOR |
+| **2 · .NET** — Perfiles usuario | [ejercicio2-dotnet](ejercicio2-dotnet) | 8194 | SQLi + BOLA/IDOR + validación `bio` |
+| **3 · Integrador** — Informes B2B | [ejercicio3-integrador](ejercicio3-integrador) | 8198 | XXE + SQLi + auth + rate limit + PDF |
+
+---
+
+## Deserialización insegura
+
+`ObjectInputStream.readObject()` sin filtro vs JSON con Jackson y tipo conocido.
+
+| Carpeta | Puerto |
+|---------|--------|
+| [spring-insecure-deserialization](spring-insecure-deserialization) | 8197 |
+
+| Variante | Endpoint |
+|----------|----------|
+| ANTES | `POST /api/users/vulnerable/deserialize` |
+| DESPUÉS | `POST /api/users/seguro/deserialize` |
 
 ---
 
 ## Logging seguro
 
-No registrar contraseñas, JWT, tarjetas ni CVV en logs ni en respuestas de error.
+No registrar contraseñas, JWT, tarjetas ni CVV en logs; no devolver stack traces al cliente.
 
 | Carpeta | Puerto |
 |---------|--------|
@@ -162,8 +180,10 @@ No registrar contraseñas, JWT, tarjetas ni CVV en logs ni en respuestas de erro
 
 | Variante | Spring (8195) | .NET (8196) |
 |----------|---------------|-------------|
-| ANTES | `POST /api/auth/vulnerable/login` | `POST /api/checkout/vulnerable` |
-| DESPUÉS | `POST /api/auth/seguro/login` | `POST /api/checkout/seguro` |
+| Logging ANTES | `POST /api/auth/vulnerable/login` | `POST /api/checkout/vulnerable` |
+| Logging DESPUÉS | `POST /api/auth/seguro/login` | `POST /api/checkout/seguro` |
+| Errores HTTP ANTES | `GET /api/orders/vulnerable/{id}` | — |
+| Errores HTTP DESPUÉS | `GET /api/orders/seguro/{id}` | — |
 
 ---
 

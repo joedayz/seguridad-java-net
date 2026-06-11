@@ -1,0 +1,24 @@
+server:
+  port: 8198
+
+spring:
+  application:
+    name: reports-integrador
+  datasource:
+    url: jdbc:h2:mem:reports;MODE=PostgreSQL;DB_CLOSE_DELAY=-1
+    driver-class-name: org.h2.Driver
+    username: sa
+    password:
+  sql:
+    init:
+      mode: always
+
+reports:
+  api-key: demo-reports-key
+  rate-limit:
+    capacity: 5
+    window-seconds: 60
+
+logging:
+  level:
+    com.example.integrador: INFO

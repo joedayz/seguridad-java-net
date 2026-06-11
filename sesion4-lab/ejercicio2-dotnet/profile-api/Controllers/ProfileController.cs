@@ -12,6 +12,7 @@ namespace ProfileApi.Controllers;
 /// Ejercicio 2 — perfiles de usuario. Vulnerabilidades en /vulnerable:
 /// 1) SQL Injection (interpolacion en queries Dapper)
 /// 2) BOLA / IDOR (sin verificar que el usuario autenticado puede ver/editar el perfil)
+/// 3) Sin validacion de entrada en bio (sin limite de longitud)
 /// </summary>
 [ApiController]
 [Route("api/profile")]

@@ -25,7 +25,7 @@ Cada carpeta tiene su propio **`README.md`** con endpoints, payloads y pruebas p
 | **8193** | Ejercicio 1 — SQLi + XSS | [ejercicio1-java](ejercicio1-java) | Búsqueda de productos |
 | **8194** | Ejercicio 2 — SQLi + BOLA | [ejercicio2-dotnet](ejercicio2-dotnet) | Perfiles con Dapper |
 | **8195** | Logging seguro + errores HTTP | [spring-secure-logging](spring-secure-logging) | SLF4J / `@ControllerAdvice` |
-| **8196** | Logging seguro | [aspnet-secure-logging](aspnet-secure-logging) | `ILogger` |
+| **8196** | Logging seguro + errores HTTP | [aspnet-secure-logging](aspnet-secure-logging) | `ILogger` / `IExceptionHandler` |
 | **8197** | Deserialización insegura | [spring-insecure-deserialization](spring-insecure-deserialization) | `ObjectInputStream` vs Jackson |
 | **8198** | Ejercicio integrador | [ejercicio3-integrador](ejercicio3-integrador) | XXE + SQLi + API key + rate limit |
 
@@ -182,8 +182,8 @@ No registrar contraseñas, JWT, tarjetas ni CVV en logs; no devolver stack trace
 |----------|---------------|-------------|
 | Logging ANTES | `POST /api/auth/vulnerable/login` | `POST /api/checkout/vulnerable` |
 | Logging DESPUÉS | `POST /api/auth/seguro/login` | `POST /api/checkout/seguro` |
-| Errores HTTP ANTES | `GET /api/orders/vulnerable/{id}` | — |
-| Errores HTTP DESPUÉS | `GET /api/orders/seguro/{id}` | — |
+| Errores HTTP ANTES | `GET /api/orders/vulnerable/{id}` | `GET /api/orders/vulnerable/{id}` |
+| Errores HTTP DESPUÉS | `GET /api/orders/seguro/{id}` | `GET /api/orders/seguro/{id}` |
 
 ---
 

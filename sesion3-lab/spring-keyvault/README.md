@@ -140,6 +140,48 @@ spring:
 
 ---
 
+## Rotación y caducidad del lease (WARN `Cannot renew lease`)
+
+Si dejas la app corriendo verás en algún momento:
+
+```
+WARN ... LeaseEventPublisher$LoggingErrorListener : ... Cannot renew lease: Status 400 Bad Request lease expired
+```
+
+**Es esperado**, no un bug. La credencial dinámica tiene `default_ttl=1h` y `max_ttl=24h`:
+
+- Spring Cloud Vault **renueva** el lease de forma periódica para mantener vivo el usuario
+  (hasta el `max_ttl` de 24h).
+- Cuando se agota el `max_ttl`, o cuando la máquina **se suspende/duerme** y el planificador
+  de renovación no corre a tiempo, el lease caduca. Al despertar, Spring intenta renovar un
+  lease **ya expirado** → `400 lease expired`. (Por eso aparece tras una noche, con salto de
+  fecha en los logs.)
+
+### Limitación importante (didáctica)
+
+Las credenciales se inyectan en `spring.datasource.*` **una sola vez al arrancar**, y
+**HikariCP** las cachea. Aunque Vault rote la credencial, el pool **no** adopta la nueva
+automáticamente. Es decir: cuando el usuario dinámico se revoca, el pool deja de poder
+conectar.
+
+### Recuperación
+
+Reinicia la app: al arrancar pide una credencial nueva.
+
+```bash
+podman restart spring-vault-app   # o: ./compose.sh restart app
+```
+
+### En producción
+
+Para sobrevivir a la rotación **sin reiniciar** se usa un `DataSource` que refresca las
+credenciales (p. ej. bean `@RefreshScope` + evento de rotación de Spring Cloud Vault, o un
+pool que pida la credencial a Vault en cada nueva conexión). Queda fuera del alcance de esta
+demo, cuyo objetivo es **mostrar** que la credencial es efímera y con TTL.
+
+> Los servicios llevan `restart: unless-stopped`, así que el stack vuelve solo tras reiniciar
+> la máquina (pero la app seguirá necesitando credencial nueva, que obtiene al rearrancar).
+
 ## De laboratorio a producción
 
 | Aspecto | En la demo | En producción |

@@ -1,0 +1,6 @@
+services:
+  sqli-spring-server:
+    build: ./sqli-server
+    container_name: sqli-spring-server
+    ports:
+      - "8181:8181"

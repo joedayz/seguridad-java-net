@@ -1,0 +1,18 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <RootNamespace>SqlInjectionDemo</RootNamespace>
+    <AssemblyName>SqlInjectionDemo</AssemblyName>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <!-- SQLite embebido: la demo arranca sin instalar SQL Server. El patron
+         vulnerable (concatenacion) y la correccion (parametros) son identicos
+         a los de Microsoft.Data.SqlClient que aparece en la diapositiva. -->
+    <PackageReference Include="Microsoft.Data.Sqlite" Version="8.0.10" />
+  </ItemGroup>
+
+</Project>

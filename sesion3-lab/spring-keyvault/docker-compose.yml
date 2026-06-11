@@ -2,6 +2,7 @@ services:
   postgres:
     image: postgres:16
     container_name: spring-vault-postgres
+    restart: unless-stopped
     environment:
       POSTGRES_USER: vault-admin
       POSTGRES_PASSWORD: vault-admin-pass
@@ -22,6 +23,7 @@ services:
   vault:
     image: hashicorp/vault:1.15
     container_name: spring-vault
+    restart: unless-stopped
     depends_on:
       postgres:
         condition: service_healthy
@@ -47,6 +49,7 @@ services:
   app:
     build: ./app
     container_name: spring-vault-app
+    restart: unless-stopped
     depends_on:
       vault:
         condition: service_healthy

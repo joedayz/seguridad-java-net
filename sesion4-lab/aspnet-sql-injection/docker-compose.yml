@@ -1,0 +1,6 @@
+services:
+  sqli-aspnet-demo:
+    build: ./sqli-demo
+    container_name: sqli-aspnet-demo
+    ports:
+      - "8182:8182"

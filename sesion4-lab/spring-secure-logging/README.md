@@ -35,9 +35,14 @@ log.info("Login outcome username={}, success={}", username, ok);
 
 ## Cómo levantarlo
 
+Requisitos: Docker Desktop o Podman con `compose`.
+
 ```bash
+cd spring-secure-logging
 docker compose up --build
 ```
+
+Alternativa: `./compose.sh up --build` · Parar: `docker compose down`
 
 ---
 

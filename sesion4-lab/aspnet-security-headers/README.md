@@ -39,11 +39,22 @@ En la demo el middleware vive en `SecurityHeadersMiddleware.cs` (`UseSecurityHea
 
 ---
 
+## Cómo levantarlo
+
+Requisitos: Docker Desktop o Podman con `compose`.
+
+```bash
+cd aspnet-security-headers
+docker compose up --build
+```
+
+Alternativa: `./compose.sh up --build` · Parar: `docker compose down`
+
+---
+
 ## Cómo probar
 
 ```bash
-docker compose up --build
-
 curl -i http://localhost:8192/api/insecure/check
 curl -i http://localhost:8192/api/secure/check
 ```
@@ -51,3 +62,13 @@ curl -i http://localhost:8192/api/secure/check
 La respuesta segura incluye `X-Frame-Options`, `Content-Security-Policy`, `Referrer-Policy`, etc.
 
 > **HSTS** (`UseHsts`) solo se envia en HTTPS. En `http://localhost` no aparecera.
+
+---
+
+## Windows — cmd y curl.exe (sin PowerShell)
+
+```cmd
+cd aspnet-security-headers
+docker compose up --build
+curl.exe -i http://localhost:8192/api/secure/check
+```

@@ -43,9 +43,14 @@ http.headers(headers -> headers
 
 ## Cómo levantarlo
 
+Requisitos: Docker Desktop o Podman con `compose`.
+
 ```bash
+cd spring-security-headers
 docker compose up --build
 ```
+
+Alternativa: `./compose.sh up --build` · Parar: `docker compose down`
 
 ---
 
@@ -60,3 +65,13 @@ curl -i http://localhost:8191/api/secure/check
 ```
 
 > **HSTS** solo se envia en conexiones HTTPS. En `http://localhost` no aparecera; el resto si.
+
+---
+
+## Windows — cmd y curl.exe (sin PowerShell)
+
+```cmd
+cd spring-security-headers
+docker compose up --build
+curl.exe -i http://localhost:8191/api/secure/check
+```

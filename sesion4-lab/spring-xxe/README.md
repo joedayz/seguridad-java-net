@@ -63,9 +63,14 @@ En AWS real el objetivo sería `http://169.254.169.254/latest/meta-data/iam/secu
 
 ## Cómo levantarlo
 
+Requisitos: Docker Desktop o Podman con `compose`.
+
 ```bash
+cd spring-xxe
 docker compose up --build
 ```
+
+Alternativa: `./compose.sh up --build` · Parar: `docker compose down`
 
 ---
 
@@ -119,3 +124,13 @@ spf.setNamespaceAware(true);
 
 > Preferir JSON cuando sea posible. Si debes parsear XML, usa siempre un factory
 > endurecido como en `XxeMitigationExample`.
+
+---
+
+## Windows — cmd y curl.exe (sin PowerShell)
+
+```cmd
+cd spring-xxe
+docker compose up --build
+curl.exe -s -X POST http://localhost:8187/api/profile/vulnerable -H "Content-Type: application/xml" -d "<userProfile><username>ana</username></userProfile>"
+```

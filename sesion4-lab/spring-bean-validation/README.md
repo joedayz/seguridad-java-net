@@ -46,9 +46,14 @@ con el detalle de errores por campo.
 
 ## Cómo levantarlo
 
+Requisitos: Docker Desktop o Podman con `compose`.
+
 ```bash
+cd spring-bean-validation
 docker compose up --build
 ```
+
+Alternativa: `./compose.sh up --build` · Parar: `docker compose down`
 
 ---
 
@@ -86,3 +91,13 @@ curl -s -X POST http://localhost:8189/api/users/seguro \
 
 Valida **siempre** la entrada en el servidor con `@Valid` / `@Validated`. La validación
 solo en el cliente no es suficiente.
+
+---
+
+## Windows — cmd y curl.exe (sin PowerShell)
+
+```cmd
+cd spring-bean-validation
+docker compose up --build
+curl.exe -s -X POST http://localhost:8189/api/users/seguro -H "Content-Type: application/json" -d "{\"username\":\"ana_garcia\",\"email\":\"ana@acme.com\",\"age\":30}"
+```

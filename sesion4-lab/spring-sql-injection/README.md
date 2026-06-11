@@ -129,6 +129,7 @@ La primera vez tarda un poco porque compila la app de Spring Boot.
 ### Podman (macOS / Linux / Windows)
 
 ```bash
+cd spring-sql-injection
 podman machine start   # solo la primera vez o si está parada
 podman compose up --build
 ```
@@ -136,6 +137,7 @@ podman compose up --build
 ### Docker Desktop (macOS / Linux / Windows)
 
 ```bash
+cd spring-sql-injection
 docker compose up --build
 docker compose down
 ```

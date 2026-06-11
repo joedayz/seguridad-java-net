@@ -52,9 +52,12 @@ no se ejecuta.
 
 ## Cómo levantarlo
 
+Requisitos: Docker Desktop o Podman con `compose`.
+
 ### Podman (macOS / Linux / Windows)
 
 ```bash
+cd spring-xss-thymeleaf
 podman machine start   # solo la primera vez o si está parada
 podman compose up --build
 ```
@@ -62,6 +65,7 @@ podman compose up --build
 ### Docker Desktop
 
 ```bash
+cd spring-xss-thymeleaf
 docker compose up --build
 docker compose down
 ```
@@ -121,3 +125,14 @@ mvn spring-boot:run
   una fuente 100 % confiable y esté sanitizado.
 - Si escapas en el controlador, usa **`HtmlUtils.htmlEscape()`** (o equivalente).
 - Nunca reflejes entrada del usuario con salida sin escapar (Thymeleaf, JSP, Razor, etc.).
+
+---
+
+## Windows — cmd y curl.exe (sin PowerShell)
+
+```cmd
+cd spring-xss-thymeleaf
+docker compose up --build
+```
+
+Abre en el navegador: http://localhost:8183/comments

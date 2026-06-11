@@ -59,10 +59,14 @@ incluya de forma involuntaria.
 
 ## Cómo levantarlo
 
+Requisitos: Docker Desktop o Podman con `compose`.
+
 ```bash
+cd aspnet-csrf
 docker compose up --build
-# o: ./compose.sh up --build
 ```
+
+Alternativa: `./compose.sh up --build` · Parar: `docker compose down`
 
 | Servicio | URL |
 |----------|-----|
@@ -95,3 +99,14 @@ dotnet run --urls http://localhost:8186
 - En Razor Pages y MVC con cookies de sesión, el Anti-Forgery es **obligatorio**.
 - Configura `SameSite=Strict` (o `Lax`) en cookies de sesión y del token.
 - En APIs puras con JWT en cabecera, CSRF **no aplica**.
+
+---
+
+## Windows — cmd y curl.exe (sin PowerShell)
+
+```cmd
+cd aspnet-csrf
+docker compose up --build
+```
+
+Abre en el navegador: http://localhost:8186/vulnerable y http://localhost:8186/attacker

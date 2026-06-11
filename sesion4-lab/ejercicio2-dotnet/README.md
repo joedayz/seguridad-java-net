@@ -88,6 +88,27 @@ curl -s -X PUT -H "Content-Type: application/json" \
 
 ## Cómo levantarlo
 
+Requisitos: Docker Desktop o Podman con `compose`.
+
 ```bash
+cd ejercicio2-dotnet
 docker compose up --build
+```
+
+Alternativa:
+
+```bash
+./compose.sh up --build
+```
+
+Parar: `docker compose down` o `./compose.sh down`.
+
+---
+
+## Windows — cmd y curl.exe (sin PowerShell)
+
+```cmd
+cd ejercicio2-dotnet
+docker compose up --build
+curl.exe -s "http://localhost:8194/api/profile/vulnerable/22222222-2222-2222-2222-222222222222"
 ```

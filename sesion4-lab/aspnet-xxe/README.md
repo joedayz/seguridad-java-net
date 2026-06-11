@@ -67,9 +67,14 @@ while (reader.Read())
 
 ## Cómo levantarlo
 
+Requisitos: Docker Desktop o Podman con `compose`.
+
 ```bash
+cd aspnet-xxe
 docker compose up --build
 ```
+
+Alternativa: `./compose.sh up --build` · Parar: `docker compose down`
 
 ---
 
@@ -90,4 +95,14 @@ curl -s -X POST http://localhost:8188/api/profile/vulnerable \
 curl -s -X POST http://localhost:8188/api/profile/seguro-reader \
   -H "Content-Type: application/xml" \
   --data-binary @payloads/file-read.xml
+```
+
+---
+
+## Windows — cmd y curl.exe (sin PowerShell)
+
+```cmd
+cd aspnet-xxe
+docker compose up --build
+curl.exe -s -X POST http://localhost:8188/api/profile/vulnerable -H "Content-Type: application/xml" -d "<userProfile><username>ana</username></userProfile>"
 ```

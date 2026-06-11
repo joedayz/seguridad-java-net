@@ -1,196 +1,176 @@
 # Sesión 4 — Laboratorios
 
-Demos de **vulnerabilidades y desarrollo seguro** (OWASP Top 10) en los dos stacks.
+Demos de **vulnerabilidades y desarrollo seguro** (OWASP Top 10) en Java (Spring Boot) y .NET (ASP.NET Core).
 
-## Logging seguro (no registrar secretos)
-
-Demuestra por qué **no** deben aparecer contraseñas, JWT, tarjetas o CVV en logs ni en respuestas de error.
-
-| Carpeta | Stack | Puerto |
-|---------|-------|--------|
-| [spring-secure-logging](spring-secure-logging) | Spring Boot · SLF4J / Logback | 8195 |
-| [aspnet-secure-logging](aspnet-secure-logging) | ASP.NET Core · `ILogger` | 8196 |
-
-| Variante | Spring (8195) | .NET (8196) |
-|----------|---------------|-------------|
-| ANTES — vulnerable | `POST /api/auth/vulnerable/login` | `POST /api/checkout/vulnerable` |
-| DESPUÉS — seguro | `POST /api/auth/seguro/login` | `POST /api/checkout/seguro` |
-
-La respuesta JSON incluye `lineasLog` (Java siempre; .NET en la variante segura) para ver el contraste en clase.
+Cada carpeta tiene su propio **`README.md`** con endpoints, payloads y pruebas paso a paso.
 
 ---
 
-## Ejercicio 2 · .NET — Perfiles de usuario
+## Índice completo de demos
 
-**SQL Injection** + **BOLA/IDOR** en versión MAL; Dapper parametrizado + autorización en la corrección.
+| Puerto | Tema | Carpeta | Stack |
+|--------|------|---------|-------|
+| **8181** | SQL Injection | [spring-sql-injection](spring-sql-injection) | Spring Boot + H2 |
+| **8182** | SQL Injection | [aspnet-sql-injection](aspnet-sql-injection) | ASP.NET Core + SQLite |
+| **8183** | XSS | [spring-xss-thymeleaf](spring-xss-thymeleaf) | Spring Boot + Thymeleaf |
+| **8184** | XSS | [aspnet-xss-razor](aspnet-xss-razor) | ASP.NET Core + Razor |
+| **8185** | CSRF | [spring-csrf](spring-csrf) | Spring Boot + Spring Security |
+| **8186** | CSRF | [aspnet-csrf](aspnet-csrf) | ASP.NET Core + Anti-Forgery |
+| **8187** | XXE | [spring-xxe](spring-xxe) | Spring Boot · XML parser |
+| **8188** | XXE | [aspnet-xxe](aspnet-xxe) | ASP.NET Core · `XmlReader` |
+| **8189** | Validación de entrada | [spring-bean-validation](spring-bean-validation) | Jakarta `@Valid` |
+| **8190** | Validación de entrada | [aspnet-bean-validation](aspnet-bean-validation) | Data Annotations + FluentValidation |
+| **8191** | Security Headers | [spring-security-headers](spring-security-headers) | `SecurityFilterChain` |
+| **8192** | Security Headers | [aspnet-security-headers](aspnet-security-headers) | Middleware HTTP |
+| **8193** | Ejercicio 1 — SQLi + XSS | [ejercicio1-java](ejercicio1-java) | Búsqueda de productos |
+| **8194** | Ejercicio 2 — SQLi + BOLA | [ejercicio2-dotnet](ejercicio2-dotnet) | Perfiles con Dapper |
+| **8195** | Logging seguro | [spring-secure-logging](spring-secure-logging) | SLF4J / Logback |
+| **8196** | Logging seguro | [aspnet-secure-logging](aspnet-secure-logging) | `ILogger` |
+
+**Requisitos:** Docker Desktop o Podman con `compose`. Puertos **8181–8196** libres en `localhost`.
+
+---
+
+## Cómo ejecutar cualquier demo
+
+```bash
+cd <carpeta-de-la-demo>
+docker compose up --build
+```
+
+Alternativa (el script detecta Podman o Docker):
+
+```bash
+chmod +x compose.sh   # solo la primera vez en macOS/Linux
+./compose.sh up --build
+```
+
+Parar: `docker compose down` o `./compose.sh down`.
+
+Luego abre el `README.md` de esa carpeta para los `curl` o URLs del navegador.
+
+---
+
+## SQL Injection
+
+Consulta **vulnerable** (concatenación) vs **segura** (parametrizada). La respuesta incluye `sqlEjecutado`.
 
 | Carpeta | Puerto |
 |---------|--------|
-| [ejercicio2-dotnet](ejercicio2-dotnet) | 8194 |
+| [spring-sql-injection](spring-sql-injection) | 8181 |
+| [aspnet-sql-injection](aspnet-sql-injection) | 8182 |
 
-| Versión | GET | PUT bio |
-|---------|-----|---------|
-| MAL | `/api/profile/vulnerable/{userId}` | `/api/profile/vulnerable/{userId}/bio` |
-| BIEN | `/api/profile/seguro/{userId}` | `/api/profile/seguro/{userId}/bio` |
+| Caso | Spring (8181) | .NET (8182) |
+|------|---------------|-------------|
+| Usuarios (email) | `GET /api/usuarios/vulnerable?email=...` | `GET /api/usuarios/vulnerable?email=...` |
+| Productos (`LIKE`) | `GET /api/productos/vulnerable?q=...` | — |
+| Usuarios JPA (HQL) | `GET /api/usuarios-jpa/vulnerable?email=...` | — |
+| Usuarios EF | — | `GET /api/usuarios-ef/vulnerable?username=...` |
 
-Auth simulada: cabeceras `X-User-Id` y `X-User-Role: Admin`.
-
----
-
-## Ejercicio 1 · Java — Búsqueda de productos
-
-Endpoint con **dos vulnerabilidades** en la versión MAL: **SQL Injection** + **XSS** (HTML sin escapar).
-
-| Carpeta | Puerto |
-|---------|--------|
-| [ejercicio1-java](ejercicio1-java) | 8193 |
-
-| Versión | Endpoint |
-|---------|----------|
-| MAL | `GET /api/products/vulnerable/search?keyword=...&category=...` |
-| BIEN | `GET /api/products/seguro/search?keyword=...&category=...` |
-
----
-
-## Security Headers
-
-Headers HTTP de defensa en profundidad (CSP, X-Frame-Options, HSTS, CORS).
-
-| Carpeta | Stack | Puerto |
-|---------|-------|--------|
-| [spring-security-headers](spring-security-headers) | Spring Boot · `SecurityFilterChain` | 8191 |
-| [aspnet-security-headers](aspnet-security-headers) | ASP.NET Core · middleware | 8192 |
-
-| Variante | Spring (8191) | .NET (8192) |
-|----------|---------------|-------------|
-| ANTES — sin headers | `GET /api/insecure/check` | `GET /api/insecure/check` |
-| DESPUÉS — seguro | `GET /api/secure/check` | `GET /api/secure/check` |
-
-Ver headers: `curl -i http://localhost:8192/api/secure/check`
-
----
-
-## Validación de entrada
-
-Validación de datos de usuario (username, email, age).
-
-| Carpeta | Stack | Puerto |
-|---------|-------|--------|
-| [spring-bean-validation](spring-bean-validation) | Spring Boot · Jakarta `@Valid` | 8189 |
-| [aspnet-bean-validation](aspnet-bean-validation) | ASP.NET Core · Data Annotations + FluentValidation | 8190 |
-
-| Variante | Spring (8189) | .NET (8190) |
-|----------|---------------|-------------|
-| ANTES — sin validar | `POST /api/users/vulnerable` | `POST /api/users/vulnerable` |
-| DESPUÉS — seguro | `POST /api/users/seguro` | `POST /api/users/seguro-anotaciones` · `POST /api/users/seguro-fluent` |
+Payload de prueba: `' OR '1'='1`
 
 ---
 
 ## Cross-Site Scripting (XSS)
 
-Formulario de comentarios en dos variantes (antes / después) en Java y .NET.
+Formulario de comentarios: salida sin escapar vs escapada.
 
-| Carpeta | Stack | Puerto |
-|---------|-------|--------|
-| [spring-xss-thymeleaf](spring-xss-thymeleaf) | Spring Boot + Thymeleaf (`th:utext` vs `th:text`) | 8183 |
-| [aspnet-xss-razor](aspnet-xss-razor) | ASP.NET Core + Razor (`Html.Raw` vs `@Model`) | 8184 |
+| Carpeta | Puerto | Vulnerable | Seguro |
+|---------|--------|------------|--------|
+| [spring-xss-thymeleaf](spring-xss-thymeleaf) | 8183 | `/comments` | `/secure-comments` |
+| [aspnet-xss-razor](aspnet-xss-razor) | 8184 | `/comments` | `/secure-comments` |
 
-| Variante | Spring (8183) | .NET (8184) |
-|----------|---------------|-------------|
-| ANTES — vulnerable | `/comments` | `/comments` |
-| DESPUÉS — seguro | `/secure-comments` | `/secure-comments` |
-
-Payload de prueba en el navegador: `<script>alert('XSS')</script>`
-
----
-
-## XML External Entity (XXE)
-
-Endpoint que parsea perfiles XML: parser **vulnerable** vs **seguro**.
-
-| Carpeta | Stack | Puerto |
-|---------|-------|--------|
-| [spring-xxe](spring-xxe) | Spring Boot · `DocumentBuilderFactory` | 8187 |
-| [aspnet-xxe](aspnet-xxe) | ASP.NET Core · `XmlReaderSettings` (`XxeMitigationExample`) | 8188 |
-
-| Variante | Endpoint |
-|----------|----------|
-| ANTES — vulnerable | `POST /api/profile/vulnerable` |
-| DESPUÉS — seguro (DOM / Reader) | `POST /api/profile/seguro` · `POST /api/profile/seguro-reader` |
-
-Payloads de ejemplo en cada carpeta `payloads/` (lectura de archivo + SSRF a metadatos simulados).
+Payload en navegador: `<script>alert('XSS')</script>`
 
 ---
 
 ## Cross-Site Request Forgery (CSRF)
 
-Transferencia bancaria simulada: versión **sin protección** vs **token Anti-Forgery**.
+Transferencia bancaria simulada sin protección vs token CSRF / Anti-Forgery.
 
-| Carpeta | Stack | Puerto |
-|---------|-------|--------|
-| [spring-csrf](spring-csrf) | Spring Boot + Spring Security | 8185 |
-| [aspnet-csrf](aspnet-csrf) | ASP.NET Core + Razor Pages (`AddAntiforgery`) | 8186 |
-
-| Variante | Spring (8185) | .NET (8186) |
-|----------|---------------|-------------|
-| ANTES — vulnerable | `/vulnerable` | `/vulnerable` |
-| DESPUÉS — seguro | `/secure` | `/secure` |
-| Sitio malicioso | `/attacker` | `/attacker` |
+| Carpeta | Puerto | Vulnerable | Seguro | Atacante |
+|---------|--------|------------|--------|----------|
+| [spring-csrf](spring-csrf) | 8185 | `/vulnerable` | `/secure` | `/attacker` |
+| [aspnet-csrf](aspnet-csrf) | 8186 | `/vulnerable` | `/secure` | `/attacker` |
 
 ---
 
-## SQL Injection — el antes y el después
+## XML External Entity (XXE)
 
-Cada caso expone el **mismo** endpoint en dos variantes: una **vulnerable** (concatenación
-de la entrada en la SQL) y otra **segura** (consulta parametrizada). La respuesta incluye el
-`sqlEjecutado` para ver cómo la inyección reescribe la query.
+Parser XML vulnerable vs endurecido. Payloads en `payloads/` de cada demo.
 
-- **Usuarios** — búsqueda por email (`' OR '1'='1` vuelca toda la tabla, incluida una
-  `API_KEY` simulada).
-- **Productos** — búsqueda con `LIKE` (`' OR '1'='1' --` devuelve todos los productos).
-- **Usuarios JPA** — HQL concatenado vs parámetro nombrado (mismo payload que JDBC).
+| Carpeta | Puerto |
+|---------|--------|
+| [spring-xxe](spring-xxe) | 8187 |
+| [aspnet-xxe](aspnet-xxe) | 8188 |
 
-En .NET además:
+| Variante | Endpoint |
+|----------|----------|
+| ANTES | `POST /api/profile/vulnerable` |
+| DESPUÉS | `POST /api/profile/seguro` · `POST /api/profile/seguro-reader` (.NET) |
 
-- **Usuarios EF** — `FromSqlRaw` con interpolación vs `FromSqlInterpolated` / `FromSqlRaw` con `{0}` / LINQ `Where`.
+---
 
-| Carpeta | Descripción | Puerto API |
-|---------|-------------|------------|
-| [spring-sql-injection](spring-sql-injection) | Spring Boot + H2 · JDBC, `LIKE` y Hibernate/JPA (vulnerable vs seguro) | 8181 |
-| [aspnet-sql-injection](aspnet-sql-injection) | ASP.NET Core + SQLite · ADO.NET y Entity Framework (vulnerable vs seguro) | 8182 |
+## Validación de entrada
 
-Endpoints Java (Spring Boot):
+Datos de usuario sin validar vs `@Valid` / Data Annotations / FluentValidation.
 
-| Caso | ANTES — vulnerable | DESPUÉS — seguro |
-|------|--------------------|------------------|
-| Usuarios (email) | `GET /api/usuarios/vulnerable?email=...` | `GET /api/usuarios/seguro?email=...` |
-| Productos (`LIKE`) | `GET /api/productos/vulnerable?q=...` | `GET /api/productos/seguro?q=...` |
-| Usuarios JPA (HQL) | `GET /api/usuarios-jpa/vulnerable?email=...` | `GET /api/usuarios-jpa/seguro?email=...` |
+| Carpeta | Puerto |
+|---------|--------|
+| [spring-bean-validation](spring-bean-validation) | 8189 |
+| [aspnet-bean-validation](aspnet-bean-validation) | 8190 |
 
-Endpoints .NET (ASP.NET Core):
+| Variante | Spring (8189) | .NET (8190) |
+|----------|---------------|-------------|
+| ANTES | `POST /api/users/vulnerable` | `POST /api/users/vulnerable` |
+| DESPUÉS | `POST /api/users/seguro` | `POST /api/users/seguro-anotaciones` · `seguro-fluent` |
 
-| Caso | ANTES — vulnerable | DESPUÉS — seguro |
-|------|--------------------|------------------|
-| Usuarios (ADO.NET) | `GET /api/usuarios/vulnerable?email=...` | `GET /api/usuarios/seguro?email=...` |
-| Usuarios EF (`FromSqlRaw`) | `GET /api/usuarios-ef/vulnerable?username=...` | `GET /api/usuarios-ef/seguro-interpolado?username=...` |
-| Usuarios EF (parámetros) | — | `GET /api/usuarios-ef/seguro-parametros?username=...` |
-| Usuarios EF (LINQ) | — | `GET /api/usuarios-ef/seguro-linq?username=...` |
+---
 
-Prueba rápida (sustituye el puerto por 8181 Spring / 8182 .NET):
+## Security Headers
+
+Respuestas sin headers de defensa vs CSP, X-Frame-Options, HSTS, CORS, etc.
+
+| Carpeta | Puerto |
+|---------|--------|
+| [spring-security-headers](spring-security-headers) | 8191 |
+| [aspnet-security-headers](aspnet-security-headers) | 8192 |
 
 ```bash
-# Normal
-curl -s -G "http://localhost:8181/api/usuarios/vulnerable" --data-urlencode "email=ana@acme.com"
-# Inyección en la versión vulnerable → vuelca toda la tabla
-curl -s -G "http://localhost:8181/api/usuarios/vulnerable" --data-urlencode "email=' OR '1'='1"
-# Mismo payload en la versión segura → 0 filas
-curl -s -G "http://localhost:8181/api/usuarios/seguro"     --data-urlencode "email=' OR '1'='1"
+curl -i http://localhost:8192/api/secure/check
 ```
+
+---
+
+## Ejercicios de clase
+
+| Ejercicio | Carpeta | Puerto | Vulnerabilidades |
+|-----------|---------|--------|------------------|
+| **1 · Java** — Búsqueda productos | [ejercicio1-java](ejercicio1-java) | 8193 | SQLi + XSS |
+| **2 · .NET** — Perfiles usuario | [ejercicio2-dotnet](ejercicio2-dotnet) | 8194 | SQLi + BOLA/IDOR |
+
+---
+
+## Logging seguro
+
+No registrar contraseñas, JWT, tarjetas ni CVV en logs ni en respuestas de error.
+
+| Carpeta | Puerto |
+|---------|--------|
+| [spring-secure-logging](spring-secure-logging) | 8195 |
+| [aspnet-secure-logging](aspnet-secure-logging) | 8196 |
+
+| Variante | Spring (8195) | .NET (8196) |
+|----------|---------------|-------------|
+| ANTES | `POST /api/auth/vulnerable/login` | `POST /api/checkout/vulnerable` |
+| DESPUÉS | `POST /api/auth/seguro/login` | `POST /api/checkout/seguro` |
+
+---
 
 ## Windows sin PowerShell
 
-Cada demo incluye la sección **「Windows — cmd y curl.exe (sin PowerShell)」** en su
-`README.md`, con `docker compose` y todos los pasos usando `curl.exe`.
+Cada `README.md` de demo incluye la sección **「Windows — cmd y curl.exe (sin PowerShell)」**
+con `docker compose` y, cuando aplica, `curl.exe`.
 
 Los scripts `.ps1` son opcionales.
 

@@ -62,11 +62,22 @@ builder.Services.AddValidatorsFromAssemblyContaining<CreateUserValidator>();
 
 ---
 
+## Cómo levantarlo
+
+Requisitos: Docker Desktop o Podman con `compose`.
+
+```bash
+cd aspnet-bean-validation
+docker compose up --build
+```
+
+Alternativa: `./compose.sh up --build` · Parar: `docker compose down`
+
+---
+
 ## Cómo probar
 
 ```bash
-docker compose up --build
-
 # Valido → 201
 curl -s -X POST http://localhost:8190/api/users/seguro-fluent \
   -H "Content-Type: application/json" \
@@ -83,3 +94,13 @@ curl -s -X POST http://localhost:8190/api/users/seguro-anotaciones \
 ```
 
 Vulnerable → **201**. Anotaciones / Fluent → **400** con detalle de errores.
+
+---
+
+## Windows — cmd y curl.exe (sin PowerShell)
+
+```cmd
+cd aspnet-bean-validation
+docker compose up --build
+curl.exe -s -X POST http://localhost:8190/api/users/seguro-fluent -H "Content-Type: application/json" -d "{\"username\":\"ana_garcia\",\"email\":\"ana@acme.com\",\"age\":30}"
+```

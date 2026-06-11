@@ -48,10 +48,14 @@ EncodedComment = HtmlEncoder.Default.Encode(UserComment);
 
 ## Cómo levantarlo
 
+Requisitos: Docker Desktop o Podman con `compose`.
+
 ```bash
+cd aspnet-xss-razor
 docker compose up --build
-# o: ./compose.sh up --build
 ```
+
+Alternativa: `./compose.sh up --build` · Parar: `docker compose down`
 
 | Servicio | URL |
 |----------|-----|
@@ -90,3 +94,14 @@ dotnet run --urls http://localhost:8184
 - **Nunca** uses `@Html.Raw()` con entrada del usuario.
 - Usa **`@Model.Propiedad`** y deja que Razor codifique automáticamente.
 - Si necesitas codificar en C#, usa **`HtmlEncoder.Default.Encode()`**.
+
+---
+
+## Windows — cmd y curl.exe (sin PowerShell)
+
+```cmd
+cd aspnet-xss-razor
+docker compose up --build
+```
+
+Abre en el navegador: http://localhost:8184/comments

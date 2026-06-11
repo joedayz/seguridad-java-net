@@ -51,10 +51,14 @@ server:
 
 ## Cómo levantarlo
 
+Requisitos: Docker Desktop o Podman con `compose`.
+
 ```bash
+cd spring-csrf
 docker compose up --build
-# o: ./compose.sh up --build
 ```
+
+Alternativa: `./compose.sh up --build` · Parar: `docker compose down`
 
 | Servicio | URL |
 |----------|-----|
@@ -88,3 +92,14 @@ mvn spring-boot:run
 - Incluye el **token en formularios** o envía `X-XSRF-TOKEN` desde SPA.
 - Configura **`SameSite=Lax`** (o `Strict`) en cookies de sesión.
 - Solo desactiva CSRF en APIs **stateless** autenticadas por token (JWT), no por cookie.
+
+---
+
+## Windows — cmd y curl.exe (sin PowerShell)
+
+```cmd
+cd spring-csrf
+docker compose up --build
+```
+
+Abre en el navegador: http://localhost:8185/vulnerable y http://localhost:8185/attacker

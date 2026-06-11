@@ -93,6 +93,27 @@ curl -s -G "http://localhost:8193/api/products/seguro/search" \
 
 ## Cómo levantarlo
 
+Requisitos: Docker Desktop o Podman con `compose`.
+
 ```bash
+cd ejercicio1-java
 docker compose up --build
+```
+
+Alternativa:
+
+```bash
+./compose.sh up --build
+```
+
+Parar: `docker compose down` o `./compose.sh down`.
+
+---
+
+## Windows — cmd y curl.exe (sin PowerShell)
+
+```cmd
+cd ejercicio1-java
+docker compose up --build
+curl.exe -s -G "http://localhost:8193/api/products/seguro/search" --data-urlencode "keyword=Laptop" --data-urlencode "category=electronics"
 ```

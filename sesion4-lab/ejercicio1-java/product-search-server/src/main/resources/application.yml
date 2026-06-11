@@ -1,0 +1,18 @@
+server:
+  port: 8193
+
+spring:
+  application:
+    name: product-search-server
+  datasource:
+    url: jdbc:h2:mem:products;DB_CLOSE_DELAY=-1;MODE=LEGACY
+    driver-class-name: org.h2.Driver
+    username: sa
+    password: ""
+  sql:
+    init:
+      mode: always
+
+logging:
+  level:
+    com.example.ejercicio1: INFO

@@ -1,0 +1,6 @@
+services:
+  logging-spring-server:
+    build: ./logging-server
+    container_name: logging-spring-server
+    ports:
+      - "8195:8195"

@@ -1,0 +1,30 @@
+@page
+@model IndexModel
+@{
+    ViewData["Title"] = "Inicio";
+}
+
+<main class="container">
+    <h1>Cross-Site Scripting (XSS)</h1>
+    <p class="lead">Razor Pages y ASP.NET Core — mismo comentario en dos variantes.</p>
+
+    <div class="cards">
+        <a class="card card-danger" href="/comments">
+            <h2>ANTES — vulnerable</h2>
+            <p><code>@@Html.Raw(Model.UserComment)</code> sin escapar.</p>
+            <span class="badge badge-danger">Explotable</span>
+        </a>
+        <a class="card card-safe" href="/secure-comments">
+            <h2>DESPUÉS — seguro</h2>
+            <p><code>@@Model.UserComment</code> + <code>HtmlEncoder</code>.</p>
+            <span class="badge badge-safe">A prueba de XSS</span>
+        </a>
+    </div>
+
+    <section class="hint">
+        <h3>Payload de prueba</h3>
+        <pre>&lt;script&gt;alert('XSS')&lt;/script&gt;</pre>
+        <p>También puedes probar por query string:</p>
+        <pre>/comments?comment=&lt;script&gt;alert('XSS')&lt;/script&gt;</pre>
+    </section>
+</main>

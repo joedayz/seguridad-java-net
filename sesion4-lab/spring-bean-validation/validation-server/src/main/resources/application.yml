@@ -1,0 +1,10 @@
+server:
+  port: 8189
+
+spring:
+  application:
+    name: validation-server
+
+logging:
+  level:
+    com.example.validation: INFO

@@ -1,0 +1,6 @@
+services:
+  headers-dotnet-server:
+    build: ./headers-demo
+    container_name: headers-dotnet-server
+    ports:
+      - "8192:8192"

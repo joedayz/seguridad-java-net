@@ -1,14 +1,34 @@
 # Demo SQL Injection — Spring Boot (antes / después)
 
-Demo del **antes y después** de SQL Injection en Spring Boot. El **mismo** endpoint de
-búsqueda por email se expone en dos variantes para verlas lado a lado:
+Demo del **antes y después** de SQL Injection en Spring Boot. Cada caso expone el **mismo**
+endpoint en dos variantes para verlas lado a lado:
+
+### Búsqueda por email (`UsuarioRepository`)
 
 | Variante | Endpoint | Cómo construye la query |
 |----------|----------|-------------------------|
 | **ANTES — vulnerable** | `GET /api/usuarios/vulnerable?email=...` | Concatena la entrada en la SQL (`Statement`) |
 | **DESPUÉS — seguro** | `GET /api/usuarios/seguro?email=...` | `PreparedStatement` con parámetro vinculado |
 
-Es exactamente el patrón vulnerable de la diapositiva *«SQL Injection · Código vulnerable —
+### Búsqueda de productos con `LIKE` (`ProductSearchService`)
+
+| Variante | Endpoint | Cómo construye la query |
+|----------|----------|-------------------------|
+| **ANTES — vulnerable** | `GET /api/productos/vulnerable?q=...` | Concatena la entrada dentro del `LIKE '%...%'` |
+| **DESPUÉS — seguro** | `GET /api/productos/seguro?q=...` | `PreparedStatement` con `LIKE ?` y `%` en el parámetro |
+
+### Búsqueda por email con Hibernate/JPA (`UserSearchService`)
+
+| Variante | Endpoint | Cómo construye la query |
+|----------|----------|-------------------------|
+| **ANTES — vulnerable** | `GET /api/usuarios-jpa/vulnerable?email=...` | Concatena la entrada en el HQL (`EntityManager.createQuery`) |
+| **DESPUÉS — seguro** | `GET /api/usuarios-jpa/seguro?email=...` | HQL con parámetro nombrado (`:email` + `setParameter`) |
+
+> Usar JPA/Hibernate **no** protege por sí solo: si concatenas la entrada en el HQL, la
+> inyección sigue siendo posible. La respuesta de este caso expone `consultaEjecutada`
+> (HQL) en lugar de `sqlEjecutado`.
+
+Es exactamente el patrón vulnerable de las diapositivas *«SQL Injection · Código vulnerable —
 Ejemplo real en Java»* (`Statement` + concatenación), y su corrección con consultas
 parametrizadas.
 
@@ -33,6 +53,49 @@ La condición `'1'='1'` es siempre verdadera → la base de datos devuelve **tod
 incluida la `nota_secreta` del usuario `ADMIN` (una `API_KEY` simulada). La versión segura
 trata ese texto como un email literal y no encuentra nada.
 
+### Caso productos (`LIKE`)
+
+La versión vulnerable monta la query así:
+
+```java
+String sql = "SELECT id, name, price FROM products WHERE name LIKE '%" + searchTerm + "%'";
+```
+
+Si el atacante envía `q = ' OR '1'='1' --`, la query resultante es:
+
+```sql
+SELECT id, name, price FROM products WHERE name LIKE '%' OR '1'='1' --%'
+```
+
+El comentario `--` anula el resto de la consulta → devuelve **todos** los productos,
+incluida la licencia interna de alto valor. La versión segura trata ese texto como un
+nombre literal y no encuentra nada.
+
+### Caso Hibernate/JPA (HQL)
+
+La versión vulnerable monta el HQL así:
+
+```java
+String hql = "FROM User u WHERE u.email = '" + email + "'";
+return entityManager.createQuery(hql, User.class).getResultList();
+```
+
+Si el atacante envía `email = ' OR '1'='1`, el HQL resultante es:
+
+```hql
+FROM User u WHERE u.email = '' OR '1'='1'
+```
+
+Hibernate lo traduce a SQL con la misma condición siempre verdadera → devuelve **todos** los
+usuarios. La versión segura vincula el valor con un parámetro nombrado:
+
+```java
+String hql = "FROM User u WHERE u.email = :email";
+return entityManager.createQuery(hql, User.class)
+        .setParameter("email", email)
+        .getResultList();
+```
+
 ## Datos de ejemplo (BD H2 en memoria)
 
 | email | nombre | rol | nota_secreta |
@@ -40,6 +103,14 @@ trata ese texto como un email literal y no encuentra nada.
 | ana@acme.com | Ana Garcia | USER | Borrador campana marketing Q3 |
 | luis@acme.com | Luis Perez | USER | Revision de nomina pendiente |
 | admin@acme.com | Root Admin | ADMIN | API_KEY=sk-live-9f3a7c21 (NO COMPARTIR) |
+
+| name | price |
+|------|-------|
+| Laptop Pro 15 | 1299.99 |
+| Mouse inalambrico | 29.99 |
+| Teclado mecanico | 89.50 |
+| Monitor 27 pulgadas | 349.00 |
+| Licencia interna ERP | 9999.00 |
 
 La BD es **H2 en memoria**: la demo arranca sin instalar nada y se siembra al levantar.
 
@@ -122,6 +193,55 @@ curl -s -G "http://localhost:8181/api/usuarios/vulnerable" --data-urlencode "ema
 
 Devuelve solo la fila del `ADMIN`. El `--` comenta el resto de la consulta.
 
+### Productos — búsqueda con `LIKE`
+
+**1. Búsqueda normal**
+
+```bash
+curl -s -G "http://localhost:8181/api/productos/vulnerable" --data-urlencode "q=Laptop"
+```
+
+Devuelve solo `Laptop Pro 15` (`totalFilas: 1`).
+
+**2. ANTES (vulnerable) — inyección `' OR '1'='1' --` → vuelca todos los productos**
+
+```bash
+curl -s -G "http://localhost:8181/api/productos/vulnerable" --data-urlencode "q=' OR '1'='1' --"
+```
+
+Devuelve **los 5 productos** (`totalFilas: 5`), incluida la licencia interna.
+
+**3. DESPUÉS (seguro) — el mismo payload no hace nada**
+
+```bash
+curl -s -G "http://localhost:8181/api/productos/seguro" --data-urlencode "q=' OR '1'='1' --"
+```
+
+Devuelve `totalFilas: 0`: el `PreparedStatement` busca un nombre que literalmente contenga
+`' OR '1'='1' --` y, como no existe, no devuelve filas.
+
+### Usuarios — Hibernate/JPA (HQL)
+
+**1. Búsqueda normal**
+
+```bash
+curl -s -G "http://localhost:8181/api/usuarios-jpa/vulnerable" --data-urlencode "email=ana@acme.com"
+```
+
+**2. ANTES (vulnerable) — inyección `' OR '1'='1` → vuelca toda la tabla**
+
+```bash
+curl -s -G "http://localhost:8181/api/usuarios-jpa/vulnerable" --data-urlencode "email=' OR '1'='1"
+```
+
+Fíjate en `consultaEjecutada`: el HQL inyectado queda visible en la respuesta.
+
+**3. DESPUÉS (seguro) — el mismo payload no hace nada**
+
+```bash
+curl -s -G "http://localhost:8181/api/usuarios-jpa/seguro" --data-urlencode "email=' OR '1'='1"
+```
+
 ---
 
 ## Windows — cmd y curl.exe (sin PowerShell)
@@ -139,6 +259,10 @@ En otra ventana cmd:
 curl.exe -s -G "http://localhost:8181/api/usuarios/vulnerable" --data-urlencode "email=ana@acme.com"
 curl.exe -s -G "http://localhost:8181/api/usuarios/vulnerable" --data-urlencode "email=' OR '1'='1"
 curl.exe -s -G "http://localhost:8181/api/usuarios/seguro"     --data-urlencode "email=' OR '1'='1"
+curl.exe -s -G "http://localhost:8181/api/productos/vulnerable" --data-urlencode "q=' OR '1'='1' --"
+curl.exe -s -G "http://localhost:8181/api/productos/seguro"     --data-urlencode "q=' OR '1'='1' --"
+curl.exe -s -G "http://localhost:8181/api/usuarios-jpa/vulnerable" --data-urlencode "email=' OR '1'='1"
+curl.exe -s -G "http://localhost:8181/api/usuarios-jpa/seguro"     --data-urlencode "email=' OR '1'='1"
 ```
 
 ---
@@ -157,11 +281,21 @@ mvn spring-boot:run
 ```java
 // ANTES (vulnerable): la entrada se concatena y se ejecuta como SQL
 String sql = "... WHERE email = '" + email + "'";
+String sql = "... WHERE name LIKE '%" + searchTerm + "%'";
 
 // DESPUÉS (seguro): la entrada se vincula como dato, nunca como SQL
 String sql = "... WHERE email = ?";
 ps.setString(1, email);
+
+String sql = "... WHERE name LIKE ?";
+ps.setString(1, "%" + searchTerm + "%");
+
+// Hibernate/JPA (HQL)
+String hql = "FROM User u WHERE u.email = '" + email + "'";           // vulnerable
+String hql = "FROM User u WHERE u.email = :email";                    // seguro
+em.createQuery(hql, User.class).setParameter("email", email);
 ```
 
-> Regla de oro: **nunca** construyas SQL concatenando entrada del usuario. Usa siempre
-> consultas parametrizadas (`PreparedStatement`) o un ORM que las genere por ti.
+> Regla de oro: **nunca** construyas SQL ni HQL concatenando entrada del usuario. Usa
+> siempre consultas parametrizadas (`PreparedStatement`, parámetros nombrados en HQL/JPQL)
+> o APIs del ORM que las generen por ti (p. ej. Spring Data `findByEmail`).

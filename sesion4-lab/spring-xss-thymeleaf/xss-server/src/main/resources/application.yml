@@ -1,0 +1,12 @@
+server:
+  port: 8183
+
+spring:
+  application:
+    name: xss-server
+  thymeleaf:
+    cache: false
+
+logging:
+  level:
+    com.example.xss: INFO

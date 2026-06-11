@@ -1,0 +1,6 @@
+services:
+  csrf-spring-server:
+    build: ./csrf-server
+    container_name: csrf-spring-server
+    ports:
+      - "8185:8185"

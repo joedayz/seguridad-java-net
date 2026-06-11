@@ -1,0 +1,6 @@
+services:
+  csrf-razor-server:
+    build: ./csrf-demo
+    container_name: csrf-razor-server
+    ports:
+      - "8186:8186"

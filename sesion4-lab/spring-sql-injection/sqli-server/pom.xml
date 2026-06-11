@@ -35,6 +35,12 @@
             <artifactId>spring-boot-starter-jdbc</artifactId>
         </dependency>
 
+        <!-- Hibernate/JPA: tercer caso de la demo (HQL concatenado vs parametrizado). -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-jpa</artifactId>
+        </dependency>
+
         <!-- Base de datos en memoria: la demo arranca sin instalar nada. -->
         <dependency>
             <groupId>com.h2database</groupId>

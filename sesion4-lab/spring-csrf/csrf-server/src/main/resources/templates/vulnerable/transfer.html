@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Transferencia — VULNERABLE</title>
+    <link rel="stylesheet" th:href="@{/css/demo.css}">
+</head>
+<body>
+<main class="container">
+    <a class="back" href="/">← Volver al inicio</a>
+
+    <h1>Banco ACME — transferencia</h1>
+    <p class="banner banner-danger">
+        <strong>ANTES — vulnerable.</strong> CSRF deshabilitado: un sitio externo puede
+        forzar esta operacion si tienes sesion activa.
+    </p>
+
+    <p class="balance">Saldo: <strong th:text="${balance} + ' EUR'">1000 EUR</strong></p>
+    <p class="message" th:if="${message}" th:text="${message}"></p>
+
+    <form method="post" th:action="@{/vulnerable/transfer}" class="form">
+        <!-- Sin token CSRF: cualquier POST con tu cookie de sesion es aceptado. -->
+        <label for="to">Destinatario</label>
+        <input id="to" name="to" type="text" placeholder="cuenta@banco.com" required>
+
+        <label for="amount">Importe (EUR)</label>
+        <input id="amount" name="amount" type="number" min="1" step="0.01" value="500" required>
+
+        <button type="submit">Transferir</button>
+    </form>
+
+    <form method="post" th:action="@{/vulnerable/reset}" class="form-inline">
+        <button type="submit" class="btn-secondary">Restablecer saldo (1000 EUR)</button>
+    </form>
+</main>
+</body>
+</html>

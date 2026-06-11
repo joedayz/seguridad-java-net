@@ -10,9 +10,14 @@ spring:
     driver-class-name: org.h2.Driver
     username: sa
     password: ""
+  jpa:
+    hibernate:
+      ddl-auto: none
+    open-in-view: false
+    defer-datasource-initialization: true
   sql:
     init:
-      # Ejecuta schema.sql y data.sql al arrancar para sembrar los usuarios.
+      # Ejecuta schema.sql y data.sql al arrancar para sembrar usuarios y productos.
       mode: always
 
 logging:

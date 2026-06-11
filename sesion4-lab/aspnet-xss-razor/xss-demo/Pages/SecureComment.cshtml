@@ -1,0 +1,50 @@
+@page "/secure-comments"
+@model SecureCommentModel
+@{
+    ViewData["Title"] = "SEGURO";
+}
+
+<main class="container">
+    <a class="back" href="/">← Volver al inicio</a>
+
+    <h1>Comentarios (seguro)</h1>
+    <p class="banner banner-safe">
+        <strong>DESPUÉS — seguro.</strong> Razor escapa con <code>@@Model.UserComment</code>.
+        El code-behind también calcula <code>EncodedComment</code> con
+        <code>HtmlEncoder.Default.Encode()</code>.
+    </p>
+
+    <form method="post" class="form">
+        <label for="comment">Tu comentario</label>
+        <textarea id="comment" name="comment" rows="4" placeholder="Escribe un comentario..."></textarea>
+        <button type="submit">Enviar</button>
+    </form>
+
+    @if (!string.IsNullOrEmpty(Model.UserComment))
+    {
+        <section class="output">
+            <h2>Comentario publicado</h2>
+            @*
+                SEGURO: @ escapa HTML automaticamente (< se convierte en &lt;, etc.).
+                Siempre preferir que Razor codifique los valores automaticamente.
+            *@
+            <div class="comment-box">
+                @Model.UserComment
+            </div>
+
+            @if (!string.IsNullOrEmpty(Model.EncodedComment))
+            {
+                <p class="note">
+                    Valor codificado en code-behind (<code>HtmlEncoder.Default.Encode</code>):
+                </p>
+                <pre class="encoded-preview">@Model.EncodedComment</pre>
+            }
+        </section>
+    }
+
+    <section class="hint">
+        <h3>Mismo payload — sin efecto</h3>
+        <pre>&lt;script&gt;alert('XSS')&lt;/script&gt;</pre>
+        <p>Se muestra como texto plano; el script no se ejecuta.</p>
+    </section>
+</main>

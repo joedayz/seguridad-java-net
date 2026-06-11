@@ -1,0 +1,6 @@
+services:
+  validation-spring-server:
+    build: ./validation-server
+    container_name: validation-spring-server
+    ports:
+      - "8189:8189"

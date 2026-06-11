@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Security Headers — ASP.NET Core</title>
+    <link rel="stylesheet" href="/css/demo.css">
+</head>
+<body>
+<main class="container">
+    <h1>Middleware de seguridad</h1>
+    <p class="lead">ASP.NET Core — headers HTTP vs sin configurar.</p>
+
+    <div class="cards">
+        <a class="card card-danger" href="/api/insecure/check">
+            <h2>ANTES — sin headers</h2>
+            <p>Rama <code>/api/insecure</code> sin middleware.</p>
+        </a>
+        <a class="card card-safe" href="/api/secure/check">
+            <h2>DESPUÉS — seguro</h2>
+            <p>HSTS, CSP, X-Frame-Options, CORS restringido.</p>
+        </a>
+    </div>
+
+    <section class="hint">
+        <h3>Ver headers reales</h3>
+        <pre>curl -i http://localhost:8192/api/insecure/check
+curl -i http://localhost:8192/api/secure/check</pre>
+    </section>
+</main>
+</body>
+</html>

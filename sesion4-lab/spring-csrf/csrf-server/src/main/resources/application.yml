@@ -1,0 +1,17 @@
+server:
+  port: 8185
+  servlet:
+    session:
+      cookie:
+        # SameSite=Lax: el navegador no envia la cookie en POST cross-site.
+        same-site: lax
+
+spring:
+  application:
+    name: csrf-server
+  thymeleaf:
+    cache: false
+
+logging:
+  level:
+    com.example.csrf: INFO

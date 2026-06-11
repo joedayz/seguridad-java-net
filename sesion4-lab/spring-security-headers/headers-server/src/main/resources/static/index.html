@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Security Headers — Spring Security</title>
+    <link rel="stylesheet" href="/css/demo.css">
+</head>
+<body>
+<main class="container">
+    <h1>Headers de seguridad</h1>
+    <p class="lead">Spring Security — configuracion segura vs sin headers.</p>
+
+    <div class="cards">
+        <a class="card card-danger" href="/api/insecure/check">
+            <h2>ANTES — sin headers</h2>
+            <p><code>headers.disable()</code> en la cadena de seguridad.</p>
+        </a>
+        <a class="card card-safe" href="/api/secure/check">
+            <h2>DESPUÉS — seguro</h2>
+            <p>CSP, X-Frame-Options, HSTS, CSRF, sesion STATELESS.</p>
+        </a>
+    </div>
+
+    <section class="hint">
+        <h3>Ver headers reales</h3>
+        <pre>curl -i http://localhost:8191/api/insecure/check
+curl -i http://localhost:8191/api/secure/check</pre>
+        <p>HSTS solo aparece en respuestas <strong>HTTPS</strong>. En local HTTP veras el resto de headers.</p>
+    </section>
+</main>
+</body>
+</html>

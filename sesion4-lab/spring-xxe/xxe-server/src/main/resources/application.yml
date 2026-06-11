@@ -1,0 +1,10 @@
+server:
+  port: 8187
+
+spring:
+  application:
+    name: xxe-server
+
+logging:
+  level:
+    com.example.xxe: INFO

@@ -1,0 +1,6 @@
+services:
+  ejercicio1-java:
+    build: ./product-search-server
+    container_name: ejercicio1-java
+    ports:
+      - "8193:8193"

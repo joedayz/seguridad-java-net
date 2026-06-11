@@ -1,0 +1,10 @@
+server:
+  port: 8195
+
+spring:
+  application:
+    name: logging-server
+
+logging:
+  level:
+    com.example.logging: INFO

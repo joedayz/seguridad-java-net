@@ -1,0 +1,36 @@
+@page "/secure"
+@model CsrfRazorDemo.Pages.Secure.TransferModel
+@{
+    ViewData["Title"] = "SEGURO";
+}
+
+<main class="container">
+    <a class="back" href="/">← Volver al inicio</a>
+
+    <h1>Banco ACME — transferencia (segura)</h1>
+    <p class="banner banner-safe">
+        <strong>DESPUÉS — seguro.</strong> Anti-Forgery habilitado (por defecto en Razor Pages)
+        + cookie <code>SameSite=Strict</code> en el token.
+    </p>
+
+    <p class="balance">Saldo: <strong>@Model.Balance.ToString("0.##") EUR</strong></p>
+    @if (!string.IsNullOrEmpty(Model.Message))
+    {
+        <p class="message">@Model.Message</p>
+    }
+
+    <form method="post" asp-page-handler="Transfer" class="form">
+        @* El tag helper incluye automaticamente el token Anti-Forgery. *@
+        <label for="to">Destinatario</label>
+        <input id="to" name="to" type="text" placeholder="cuenta@banco.com" required>
+
+        <label for="amount">Importe (EUR)</label>
+        <input id="amount" name="amount" type="number" min="1" step="0.01" value="500" required>
+
+        <button type="submit">Transferir</button>
+    </form>
+
+    <form method="post" asp-page-handler="Reset" class="form-inline">
+        <button type="submit" class="btn-secondary">Restablecer saldo (1000 EUR)</button>
+    </form>
+</main>

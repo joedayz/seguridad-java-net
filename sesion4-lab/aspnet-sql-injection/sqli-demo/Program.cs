@@ -1,9 +1,14 @@
 using Microsoft.Data.Sqlite;
+using Microsoft.EntityFrameworkCore;
 using SqlInjectionDemo.Data;
+using SqlInjectionDemo.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers();
+builder.Services.AddDbContext<AppDbContext>(options =>
+    options.UseSqlite(Db.ConnectionString));
+builder.Services.AddScoped<UserEfSearchService>();
 
 var app = builder.Build();
 

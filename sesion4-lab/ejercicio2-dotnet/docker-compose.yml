@@ -1,0 +1,6 @@
+services:
+  ejercicio2-dotnet:
+    build: ./profile-api
+    container_name: ejercicio2-dotnet
+    ports:
+      - "8194:8194"

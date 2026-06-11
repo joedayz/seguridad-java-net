@@ -1,0 +1,6 @@
+services:
+  logging-dotnet-server:
+    build: ./logging-demo
+    container_name: logging-dotnet-server
+    ports:
+      - "8196:8196"

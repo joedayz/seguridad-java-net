@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Demo CSRF — Spring Security</title>
+    <link rel="stylesheet" th:href="@{/css/demo.css}">
+</head>
+<body>
+<main class="container">
+    <h1>CSRF · Mitigación</h1>
+    <p class="lead">Token sincronizador y <code>SameSite</code> en una app bancaria simulada.</p>
+
+    <div class="cards">
+        <a class="card card-danger" href="/vulnerable">
+            <h2>ANTES — vulnerable</h2>
+            <p>CSRF <strong>deshabilitado</strong> en <code>/vulnerable/**</code>.</p>
+            <span class="badge badge-danger">Atacable</span>
+        </a>
+        <a class="card card-safe" href="/secure">
+            <h2>DESPUÉS — seguro</h2>
+            <p><code>CookieCsrfTokenRepository</code> + token en el formulario.</p>
+            <span class="badge badge-safe">Protegido</span>
+        </a>
+    </div>
+
+    <a class="card card-attacker" href="/attacker">
+        <h2>Sitio malicioso (simulado)</h2>
+        <p>Pagina <code>/attacker</code> que intenta transferir dinero sin tu consentimiento.</p>
+    </a>
+
+    <section class="hint">
+        <h3>Flujo de la demo</h3>
+        <ol>
+            <li>Abre <strong>Vulnerable</strong> o <strong>Seguro</strong> (saldo inicial: 1000 EUR).</li>
+            <li>Sin cerrar el navegador, abre <strong>Sitio malicioso</strong>.</li>
+            <li>Vulnerable: la transferencia se ejecuta. Seguro: Spring Security responde <strong>403 Forbidden</strong>.</li>
+        </ol>
+    </section>
+</main>
+</body>
+</html>

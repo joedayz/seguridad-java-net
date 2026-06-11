@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Comentarios — SEGURO</title>
+    <link rel="stylesheet" th:href="@{/css/demo.css}">
+</head>
+<body>
+<main class="container">
+    <a class="back" href="/">← Volver al inicio</a>
+
+    <h1>Formulario de comentarios (seguro)</h1>
+    <p class="banner banner-safe">
+        <strong>DESPUÉS — seguro.</strong> El controlador escapa con
+        <code>HtmlUtils.htmlEscape()</code> y la vista usa <code>th:text</code>
+        (escapado automatico).
+    </p>
+
+    <form method="post" class="form">
+        <label for="comment">Tu comentario</label>
+        <textarea id="comment" name="comment" rows="4" placeholder="Escribe un comentario..."></textarea>
+        <button type="submit">Enviar</button>
+    </form>
+
+    <section th:if="${comment != null and !#strings.isEmpty(comment)}" class="output">
+        <h2>Comentario publicado</h2>
+        <!--
+            SEGURO: th:text escapa HTML automaticamente (< se convierte en &lt;, etc.).
+            El controlador tambien aplica HtmlUtils.htmlEscape() antes de anadir al modelo.
+        -->
+        <div class="comment-box" th:text="${comment}"></div>
+    </section>
+
+    <section class="hint">
+        <h3>Mismo payload — sin efecto</h3>
+        <pre>&lt;script&gt;alert('XSS')&lt;/script&gt;</pre>
+        <p>Se muestra como texto plano; el script no se ejecuta.</p>
+    </section>
+</main>
+</body>
+</html>

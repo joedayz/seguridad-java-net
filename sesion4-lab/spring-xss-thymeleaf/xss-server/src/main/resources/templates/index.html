@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Demo XSS — Spring Boot + Thymeleaf</title>
+    <link rel="stylesheet" th:href="@{/css/demo.css}">
+</head>
+<body>
+<main class="container">
+    <h1>Cross-Site Scripting (XSS)</h1>
+    <p class="lead">Mismo formulario de comentarios en dos variantes: vulnerable y segura.</p>
+
+    <div class="cards">
+        <a class="card card-danger" href="/comments">
+            <h2>ANTES — vulnerable</h2>
+            <p><code>th:utext</code> renderiza HTML sin escapar.</p>
+            <span class="badge badge-danger">Explotable</span>
+        </a>
+        <a class="card card-safe" href="/secure-comments">
+            <h2>DESPUÉS — seguro</h2>
+            <p><code>th:text</code> + <code>HtmlUtils.htmlEscape()</code>.</p>
+            <span class="badge badge-safe">A prueba de XSS</span>
+        </a>
+    </div>
+
+    <section class="hint">
+        <h3>Payload de prueba</h3>
+        <pre>&lt;script&gt;alert('XSS')&lt;/script&gt;</pre>
+        <p>En la version vulnerable veras el <code>alert</code>. En la segura, el texto se muestra literalmente.</p>
+    </section>
+</main>
+</body>
+</html>

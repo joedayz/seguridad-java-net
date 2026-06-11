@@ -15,4 +15,9 @@
     <PackageReference Include="Microsoft.Data.Sqlite" Version="8.0.10" />
   </ItemGroup>
 
+  <ItemGroup>
+    <!-- Entity Framework Core: segundo caso de la demo (FromSqlRaw vs seguro). -->
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="8.0.10" />
+  </ItemGroup>
+
 </Project>

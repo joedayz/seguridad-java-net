@@ -1,0 +1,35 @@
+@page "/vulnerable"
+@model CsrfRazorDemo.Pages.Vulnerable.TransferModel
+@{
+    ViewData["Title"] = "VULNERABLE";
+}
+
+<main class="container">
+    <a class="back" href="/">← Volver al inicio</a>
+
+    <h1>Banco ACME — transferencia</h1>
+    <p class="banner banner-danger">
+        <strong>ANTES — vulnerable.</strong> Anti-Forgery deshabilitado con
+        <code>[IgnoreAntiforgeryToken]</code>.
+    </p>
+
+    <p class="balance">Saldo: <strong>@Model.Balance.ToString("0.##") EUR</strong></p>
+    @if (!string.IsNullOrEmpty(Model.Message))
+    {
+        <p class="message">@Model.Message</p>
+    }
+
+    <form method="post" asp-page-handler="Transfer" class="form">
+        <label for="to">Destinatario</label>
+        <input id="to" name="to" type="text" placeholder="cuenta@banco.com" required>
+
+        <label for="amount">Importe (EUR)</label>
+        <input id="amount" name="amount" type="number" min="1" step="0.01" value="500" required>
+
+        <button type="submit">Transferir</button>
+    </form>
+
+    <form method="post" asp-page-handler="Reset" class="form-inline">
+        <button type="submit" class="btn-secondary">Restablecer saldo (1000 EUR)</button>
+    </form>
+</main>

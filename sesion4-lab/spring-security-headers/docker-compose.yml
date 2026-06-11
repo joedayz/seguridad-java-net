@@ -1,0 +1,6 @@
+services:
+  headers-spring-server:
+    build: ./headers-server
+    container_name: headers-spring-server
+    ports:
+      - "8191:8191"

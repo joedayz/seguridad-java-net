@@ -1,0 +1,6 @@
+services:
+  xxe-dotnet-server:
+    build: ./xxe-demo
+    container_name: xxe-dotnet-server
+    ports:
+      - "8188:8188"

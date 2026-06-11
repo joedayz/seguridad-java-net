@@ -1,0 +1,6 @@
+services:
+  xss-spring-server:
+    build: ./xss-server
+    container_name: xss-spring-server
+    ports:
+      - "8183:8183"

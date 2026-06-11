@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Comentarios — VULNERABLE</title>
+    <link rel="stylesheet" th:href="@{/css/demo.css}">
+</head>
+<body>
+<main class="container">
+    <a class="back" href="/">← Volver al inicio</a>
+
+    <h1>Formulario de comentarios</h1>
+    <p class="banner banner-danger">
+        <strong>ANTES — vulnerable.</strong> La entrada se muestra con <code>th:utext</code>
+        (HTML sin escapar).
+    </p>
+
+    <form method="post" class="form">
+        <label for="comment">Tu comentario</label>
+        <textarea id="comment" name="comment" rows="4" placeholder="Escribe un comentario..."></textarea>
+        <button type="submit">Enviar</button>
+    </form>
+
+    <section th:if="${comment != null and !#strings.isEmpty(comment)}" class="output">
+        <h2>Comentario publicado</h2>
+        <!--
+            PELIGRO: th:utext renderiza HTML sin escapar. Cualquier <script> del usuario
+            se ejecuta en el navegador de quien vea la pagina.
+
+            Equivalente inseguro en JSP:
+            ${comment}  o  <c:out value="${comment}" escapeXml="false"/>
+        -->
+        <div class="comment-box" th:utext="${comment}"></div>
+    </section>
+
+    <section class="hint">
+        <h3>Prueba este payload</h3>
+        <pre>&lt;script&gt;alert('XSS')&lt;/script&gt;</pre>
+    </section>
+</main>
+</body>
+</html>

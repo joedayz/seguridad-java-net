@@ -1,0 +1,37 @@
+@page
+@model IndexModel
+@{
+    ViewData["Title"] = "Inicio";
+}
+
+<main class="container">
+    <h1>CSRF · Protección en .NET</h1>
+    <p class="lead">Anti-Forgery token y <code>SameSite</code> en una app bancaria simulada.</p>
+
+    <div class="cards">
+        <a class="card card-danger" href="/vulnerable">
+            <h2>ANTES — vulnerable</h2>
+            <p><code>[IgnoreAntiforgeryToken]</code> — sin validacion CSRF.</p>
+            <span class="badge badge-danger">Atacable</span>
+        </a>
+        <a class="card card-safe" href="/secure">
+            <h2>DESPUÉS — seguro</h2>
+            <p><code>AddAntiforgery</code> + token en el formulario.</p>
+            <span class="badge badge-safe">Protegido</span>
+        </a>
+    </div>
+
+    <a class="card card-attacker" href="/attacker">
+        <h2>Sitio malicioso (simulado)</h2>
+        <p>Pagina <code>/attacker</code> que intenta transferir dinero sin tu consentimiento.</p>
+    </a>
+
+    <section class="hint">
+        <h3>Flujo de la demo</h3>
+        <ol>
+            <li>Abre <strong>Vulnerable</strong> o <strong>Seguro</strong> (saldo inicial: 1000 EUR).</li>
+            <li>Sin cerrar el navegador, abre <strong>Sitio malicioso</strong>.</li>
+            <li>Vulnerable: la transferencia se ejecuta. Seguro: ASP.NET Core responde <strong>400 Bad Request</strong>.</li>
+        </ol>
+    </section>
+</main>

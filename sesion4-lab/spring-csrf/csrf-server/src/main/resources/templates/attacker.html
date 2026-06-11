@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>evil.com — sitio malicioso</title>
+    <link rel="stylesheet" th:href="@{/css/demo.css}">
+</head>
+<body>
+<main class="container">
+    <a class="back" href="/">← Volver al inicio</a>
+
+    <h1>evil.com</h1>
+    <p class="banner banner-danger">
+        Simula un sitio malicioso. Si tienes sesion abierta en el banco, estos formularios
+        intentan transferir <strong>500 EUR</strong> a <code>atacante@evil.com</code> sin que
+        lo sepas.
+    </p>
+
+    <section class="hint">
+        <h3>Atacar versión vulnerable</h3>
+        <p>POST a <code>/vulnerable/transfer</code> sin token CSRF.</p>
+        <form id="attack-vulnerable" method="post" action="/vulnerable/transfer" class="form-inline">
+            <input type="hidden" name="to" value="atacante@evil.com">
+            <input type="hidden" name="amount" value="500">
+            <button type="submit" class="btn-danger">Ejecutar ataque CSRF (vulnerable)</button>
+        </form>
+    </section>
+
+    <section class="hint">
+        <h3>Atacar versión segura</h3>
+        <p>POST a <code>/secure/transfer</code> sin token → Spring Security devuelve <strong>403</strong>.</p>
+        <form id="attack-secure" method="post" action="/secure/transfer" class="form-inline">
+            <input type="hidden" name="to" value="atacante@evil.com">
+            <input type="hidden" name="amount" value="500">
+            <button type="submit" class="btn-danger">Ejecutar ataque CSRF (seguro)</button>
+        </form>
+    </section>
+
+    <p class="note">
+        En un ataque real, <code>evil.com</code> enviaria el formulario automaticamente con
+        <code>display:none</code> o <code>fetch()</code> mientras visitas otra pagina.
+    </p>
+</main>
+</body>
+</html>

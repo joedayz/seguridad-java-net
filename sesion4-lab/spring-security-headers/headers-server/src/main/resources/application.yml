@@ -1,0 +1,10 @@
+server:
+  port: 8191
+
+spring:
+  application:
+    name: headers-server
+
+logging:
+  level:
+    com.example.headers: INFO

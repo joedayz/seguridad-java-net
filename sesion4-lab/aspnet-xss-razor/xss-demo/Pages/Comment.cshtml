@@ -1,0 +1,41 @@
+@page "/comments"
+@model CommentModel
+@{
+    ViewData["Title"] = "VULNERABLE";
+}
+
+<main class="container">
+    <a class="back" href="/">← Volver al inicio</a>
+
+    <h1>Comentarios</h1>
+    <p class="banner banner-danger">
+        <strong>ANTES — vulnerable.</strong> La salida usa <code>@@Html.Raw(Model.UserComment)</code>
+        (HTML sin escapar).
+    </p>
+
+    <form method="post" class="form">
+        <label for="comment">Tu comentario</label>
+        <textarea id="comment" name="comment" rows="4" placeholder="Escribe un comentario..."></textarea>
+        <button type="submit">Enviar</button>
+    </form>
+
+    @if (!string.IsNullOrEmpty(Model.UserComment))
+    {
+        <section class="output">
+            <h2>Comentario publicado</h2>
+            @*
+                PELIGRO: Html.Raw renderiza el string tal cual. Cualquier <script> del usuario
+                se ejecuta en el navegador de quien vea la pagina.
+            *@
+            <div class="comment-box">
+                @Html.Raw(Model.UserComment)
+            </div>
+        </section>
+    }
+
+    <section class="hint">
+        <h3>Prueba este payload</h3>
+        <pre>&lt;script&gt;alert('XSS')&lt;/script&gt;</pre>
+        <p>O abre: <code>/comments?comment=&lt;script&gt;alert('XSS')&lt;/script&gt;</code></p>
+    </section>
+</main>

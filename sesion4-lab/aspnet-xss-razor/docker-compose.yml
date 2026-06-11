@@ -1,0 +1,6 @@
+services:
+  xss-razor-server:
+    build: ./xss-demo
+    container_name: xss-razor-server
+    ports:
+      - "8184:8184"

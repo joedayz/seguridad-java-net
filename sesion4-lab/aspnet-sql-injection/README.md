@@ -1,12 +1,26 @@
 # Demo SQL Injection — ASP.NET Core (antes / después)
 
-Demo del **antes y después** de SQL Injection en ASP.NET Core. El **mismo** endpoint de
-búsqueda por email se expone en dos variantes para verlas lado a lado:
+Demo del **antes y después** de SQL Injection en ASP.NET Core. Cada caso expone el **mismo**
+endpoint en dos o más variantes para verlas lado a lado:
+
+### Búsqueda por email (ADO.NET / `SqliteCommand`)
 
 | Variante | Endpoint | Cómo construye la query |
 |----------|----------|-------------------------|
 | **ANTES — vulnerable** | `GET /api/usuarios/vulnerable?email=...` | Interpola la entrada en la SQL (`$"... '{email}'"`) |
 | **DESPUÉS — seguro** | `GET /api/usuarios/seguro?email=...` | Consulta parametrizada (`$email` + `Parameters.AddWithValue`) |
+
+### Búsqueda con Entity Framework Core (`UserEfSearchService`)
+
+| Variante | Endpoint | Cómo construye la query |
+|----------|----------|-------------------------|
+| **ANTES — vulnerable** | `GET /api/usuarios-ef/vulnerable?username=...` | `FromSqlRaw` con interpolación de string |
+| **DESPUÉS — seguro (opción 1)** | `GET /api/usuarios-ef/seguro-interpolado?username=...` | `FromSqlInterpolated` |
+| **DESPUÉS — seguro (opción 2)** | `GET /api/usuarios-ef/seguro-parametros?username=...` | `FromSqlRaw` con marcadores `{0}` |
+| **DESPUÉS — seguro (opción 3, recomendada)** | `GET /api/usuarios-ef/seguro-linq?username=...` | LINQ `Where` (EF genera SQL parametrizado) |
+
+> En la demo EF el parámetro se llama `username` (como en la diapositiva) y filtra por la
+> columna `email` de la tabla `users`. El patrón vulnerable/corregido es el mismo.
 
 Es el mismo problema de la diapositiva *«SQL Injection · Código vulnerable en .NET»*
 (concatenación de strings en la query) y su corrección con parámetros.
@@ -35,6 +49,47 @@ SELECT id, email, nombre, rol, nota_secreta FROM users WHERE email = '' OR '1'='
 La condición `'1'='1'` es siempre verdadera → la base de datos devuelve **todas** las filas,
 incluida la `nota_secreta` del usuario `ADMIN` (una `API_KEY` simulada). La versión segura
 trata ese texto como un email literal y no encuentra nada.
+
+### Caso Entity Framework (`FromSqlRaw` / `FromSqlInterpolated`)
+
+La versión vulnerable monta la query así:
+
+```csharp
+return _context.Users
+    .FromSqlRaw($"SELECT * FROM Users WHERE Username = '{username}'")
+    .ToList();
+```
+
+Si el atacante envía `username = ' OR '1'='1`, la SQL resultante es la misma que en ADO.NET
+→ devuelve **todos** los usuarios. Usar EF **no** protege si interpolas antes de
+`FromSqlRaw`.
+
+**Opción 1 — segura (`FromSqlInterpolated`):**
+
+```csharp
+return _context.Users
+    .FromSqlInterpolated($"SELECT * FROM Users WHERE Username = {username}")
+    .ToList();
+```
+
+**Opción 2 — segura (`FromSqlRaw` con parámetros):**
+
+```csharp
+return _context.Users
+    .FromSqlRaw("SELECT * FROM Users WHERE Username = {0}", username)
+    .ToList();
+```
+
+**Opción 3 — segura y recomendada (LINQ):**
+
+```csharp
+return _context.Users
+    .Where(u => u.Username == username)
+    .ToList();
+```
+
+EF Core traduce el `Where` a SQL parametrizado; no hace falta escribir SQL nativo salvo que
+sea estrictamente necesario. Las tres opciones seguras vinculan el valor como parámetro.
 
 ## Datos de ejemplo (SQLite en memoria)
 
@@ -122,6 +177,30 @@ curl -s -G "http://localhost:8182/api/usuarios/vulnerable" --data-urlencode "ema
 
 Devuelve solo la fila del `ADMIN`.
 
+### Usuarios — Entity Framework
+
+Usa `username` con los emails de ejemplo (`ana@acme.com`, etc.).
+
+**1. Búsqueda normal**
+
+```bash
+curl -s -G "http://localhost:8182/api/usuarios-ef/vulnerable" --data-urlencode "username=ana@acme.com"
+```
+
+**2. ANTES (vulnerable) — inyección `' OR '1'='1` → vuelca toda la tabla**
+
+```bash
+curl -s -G "http://localhost:8182/api/usuarios-ef/vulnerable" --data-urlencode "username=' OR '1'='1"
+```
+
+**3. DESPUÉS (seguro) — el mismo payload en ambas opciones → 0 filas**
+
+```bash
+curl -s -G "http://localhost:8182/api/usuarios-ef/seguro-interpolado" --data-urlencode "username=' OR '1'='1"
+curl -s -G "http://localhost:8182/api/usuarios-ef/seguro-parametros"  --data-urlencode "username=' OR '1'='1"
+curl -s -G "http://localhost:8182/api/usuarios-ef/seguro-linq"        --data-urlencode "username=' OR '1'='1"
+```
+
 ---
 
 ## Windows — cmd y curl.exe (sin PowerShell)
@@ -139,6 +218,8 @@ En otra ventana cmd:
 curl.exe -s -G "http://localhost:8182/api/usuarios/vulnerable" --data-urlencode "email=ana@acme.com"
 curl.exe -s -G "http://localhost:8182/api/usuarios/vulnerable" --data-urlencode "email=' OR '1'='1"
 curl.exe -s -G "http://localhost:8182/api/usuarios/seguro"     --data-urlencode "email=' OR '1'='1"
+curl.exe -s -G "http://localhost:8182/api/usuarios-ef/vulnerable"        --data-urlencode "username=' OR '1'='1"
+curl.exe -s -G "http://localhost:8182/api/usuarios-ef/seguro-interpolado" --data-urlencode "username=' OR '1'='1"
 ```
 
 ---
@@ -155,13 +236,26 @@ dotnet run
 ## La corrección, en una línea
 
 ```csharp
-// ANTES (vulnerable): la entrada se interpola y se ejecuta como SQL
+// ADO.NET — ANTES (vulnerable)
 var sql = $"... WHERE email = '{email}'";
 
-// DESPUÉS (seguro): la entrada se vincula como dato, nunca como SQL
+// ADO.NET — DESPUÉS (seguro)
 command.CommandText = "... WHERE email = $email";
 command.Parameters.AddWithValue("$email", email);
+
+// EF Core — ANTES (vulnerable): interpolar ANTES de FromSqlRaw
+_context.Users.FromSqlRaw($"SELECT * FROM Users WHERE Username = '{username}'");
+
+// EF Core — DESPUÉS (seguro, opcion 1)
+_context.Users.FromSqlInterpolated($"SELECT * FROM Users WHERE Username = {username}");
+
+// EF Core — DESPUÉS (seguro, opcion 2)
+_context.Users.FromSqlRaw("SELECT * FROM Users WHERE Username = {0}", username);
+
+// EF Core — DESPUÉS (seguro, opcion 3 — recomendada)
+_context.Users.Where(u => u.Username == username).ToList();
 ```
 
-> En Entity Framework, LINQ ya genera SQL parametrizado. Si necesitas SQL nativo usa
-> `FromSqlInterpolated` (parametriza) en lugar de `FromSqlRaw` con concatenación.
+> Preferir **LINQ** siempre que sea posible: EF genera SQL parametrizado. Si necesitas SQL
+> nativo, **nunca** interpoles en `FromSqlRaw`; usa `FromSqlInterpolated` o `FromSqlRaw`
+> con `{0}` y argumentos.

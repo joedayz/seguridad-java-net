@@ -1,0 +1,6 @@
+services:
+  xxe-spring-server:
+    build: ./xxe-server
+    container_name: xxe-spring-server
+    ports:
+      - "8187:8187"

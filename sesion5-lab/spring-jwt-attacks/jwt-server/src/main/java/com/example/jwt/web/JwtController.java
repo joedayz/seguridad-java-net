@@ -34,7 +34,7 @@ public class JwtController {
         return Map.of(
                 "modo", "VULNERABLE (secreto debil en application.yml)",
                 "token", token,
-                "hint", "Prueba alg=none: eyJhbGciOiJubmUifQ.eyJzdWIiOiJhZG1pbiIsInJvbGUiOiJBRE1JTiJ9.");
+                "hint", "Prueba alg=none: eyJhbGciOiJub25lIn0.eyJzdWIiOiJhZG1pbiIsInJvbGUiOiJBRE1JTiJ9.");
     }
 
     @GetMapping("/vulnerable/verify")

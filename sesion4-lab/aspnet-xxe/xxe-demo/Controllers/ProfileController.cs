@@ -16,23 +16,23 @@ public class ProfileController : ControllerBase
 
     [HttpPost("vulnerable")]
     [Consumes("application/xml")]
-    public IActionResult Vulnerable() =>
-        Parse(Request.Body, "VULNERABLE (DtdProcessing.Parse + XmlUrlResolver)", XmlProfileParser.ParseVulnerable);
+    public Task<IActionResult> Vulnerable() =>
+        ParseAsync(Request.Body, "VULNERABLE (DtdProcessing.Parse + XmlUrlResolver)", XmlProfileParser.ParseVulnerable);
 
     [HttpPost("seguro")]
     [Consumes("application/xml")]
-    public IActionResult Seguro() =>
-        Parse(Request.Body, "SEGURO (XmlDocument + XxeMitigationExample)", XmlProfileParser.ParseSeguro);
+    public Task<IActionResult> Seguro() =>
+        ParseAsync(Request.Body, "SEGURO (XmlDocument + XxeMitigationExample)", XmlProfileParser.ParseSeguro);
 
     [HttpPost("seguro-reader")]
     [Consumes("application/xml")]
-    public IActionResult SeguroReader() =>
-        Parse(Request.Body, "SEGURO (XmlReader endurecido — XxeMitigationExample)", XmlProfileParser.ParseSeguroReader);
+    public Task<IActionResult> SeguroReader() =>
+        ParseAsync(Request.Body, "SEGURO (XmlReader endurecido — XxeMitigationExample)", XmlProfileParser.ParseSeguroReader);
 
-    private IActionResult Parse(Stream body, string modo, XmlParser parser)
+    private async Task<IActionResult> ParseAsync(Stream body, string modo, XmlParser parser)
     {
         using var reader = new StreamReader(body);
-        var xml = reader.ReadToEnd();
+        var xml = await reader.ReadToEndAsync();
 
         var respuesta = new Dictionary<string, object?>
         {

@@ -1,0 +1,10 @@
+server:
+  port: 8199
+
+spring:
+  application:
+    name: audit-demo
+
+logging:
+  level:
+    SECURITY_AUDIT: INFO

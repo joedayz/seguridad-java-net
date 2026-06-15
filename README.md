@@ -15,3 +15,7 @@ Ver [sesion3-lab/README.md](sesion3-lab/README.md): **Rate Limiting** con Bucket
 ## Laboratorios (sesión 4)
 
 Ver [sesion4-lab/README.md](sesion4-lab/README.md): **SQL Injection** — el antes (código vulnerable) y el después (consulta parametrizada) en Spring Boot y ASP.NET Core.
+
+## Laboratorios (sesión 5)
+
+Ver [sesion5-lab/README.md](sesion5-lab/README.md): **Auditoría**, simulación de ataques (JWT, ZAP, Semgrep) y **laboratorio integrador SaaS** (Actuator, IDOR, secretos).

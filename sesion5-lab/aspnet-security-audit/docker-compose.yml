@@ -1,0 +1,6 @@
+services:
+  audit-aspnet-server:
+    build: ./audit-demo
+    container_name: audit-aspnet-server
+    ports:
+      - "8200:8200"

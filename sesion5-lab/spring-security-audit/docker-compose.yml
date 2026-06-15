@@ -1,0 +1,6 @@
+services:
+  audit-spring-server:
+    build: ./audit-server
+    container_name: audit-spring-server
+    ports:
+      - "8199:8199"

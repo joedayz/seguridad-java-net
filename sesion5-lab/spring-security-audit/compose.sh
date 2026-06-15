@@ -1,6 +1,4 @@
 #!/usr/bin/env bash
-# Wrapper para levantar/parar la demo con Podman o Docker (macOS / Linux).
-# En Windows usa compose.ps1
 set -euo pipefail
 
 if command -v podman >/dev/null 2>&1; then

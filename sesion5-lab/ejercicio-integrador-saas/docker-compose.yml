@@ -1,0 +1,6 @@
+services:
+  saas-server:
+    build: ./saas-server
+    container_name: saas-integrador-server
+    ports:
+      - "8208:8208"

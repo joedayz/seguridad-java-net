@@ -16,7 +16,7 @@ Demo de **XML External Entity (XXE)** en un endpoint que parsea perfiles de usua
 
 ## Payload XXE clásico — lectura de archivo
 
-En Docker el secreto está en `/app/demo-secrets/secret.txt`:
+Ver `payloads/file-read.xml`. En Docker el secreto está en `/app/demo-secrets/secret.txt`:
 
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
@@ -41,7 +41,7 @@ En Linux/macOS local (sin contenedor), puedes probar con `/etc/passwd`:
 
 ## Variante SSRF — metadatos simulados (AWS)
 
-La demo expone un mock de `169.254.169.254` en:
+Ver `payloads/ssrf-metadata.xml`. La demo expone un mock de `169.254.169.254` en:
 
 `GET /internal/mock-metadata/iam/security-credentials/demo-role`
 
@@ -76,7 +76,7 @@ Alternativa: `./compose.sh up --build` · Parar: `docker compose down`
 
 ## Cómo probar
 
-Guarda el payload en `payload.xml` y ejecuta:
+Desde el directorio `spring-xxe` (los payloads están en `payloads/`):
 
 ```bash
 # Normal (sin XXE)
@@ -87,12 +87,17 @@ curl -s -X POST http://localhost:8187/api/profile/vulnerable \
 # XXE — lectura de archivo (vulnerable)
 curl -s -X POST http://localhost:8187/api/profile/vulnerable \
   -H "Content-Type: application/xml" \
-  --data-binary @payload-file.xml
+  --data-binary @payloads/file-read.xml
+
+# XXE — SSRF / metadatos simulados (vulnerable)
+curl -s -X POST http://localhost:8187/api/profile/vulnerable \
+  -H "Content-Type: application/xml" \
+  --data-binary @payloads/ssrf-metadata.xml
 
 # Mismo payload en seguro → falla
 curl -s -X POST http://localhost:8187/api/profile/seguro \
   -H "Content-Type: application/xml" \
-  --data-binary @payload-file.xml
+  --data-binary @payloads/file-read.xml
 ```
 
 ---
@@ -133,4 +138,6 @@ spf.setNamespaceAware(true);
 cd spring-xxe
 docker compose up --build
 curl.exe -s -X POST http://localhost:8187/api/profile/vulnerable -H "Content-Type: application/xml" -d "<userProfile><username>ana</username></userProfile>"
+curl.exe -s -X POST http://localhost:8187/api/profile/vulnerable -H "Content-Type: application/xml" --data-binary @payloads\file-read.xml
+curl.exe -s -X POST http://localhost:8187/api/profile/vulnerable -H "Content-Type: application/xml" --data-binary @payloads\ssrf-metadata.xml
 ```

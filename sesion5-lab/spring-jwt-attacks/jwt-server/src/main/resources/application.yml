@@ -1,0 +1,10 @@
+server:
+  port: 8201
+
+jwt:
+  vulnerable:
+    secret: MiSecreto12
+  secure:
+    secret: "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef"
+    issuer: auth-service
+    audience: orders-service

@@ -1,0 +1,29 @@
+rules:
+  - id: sql-injection-jdbc-concat
+    patterns:
+      - pattern: |
+          $STMT.executeQuery("..." + $INPUT + "...")
+    message: Posible SQL Injection por concatenacion en JDBC
+    severity: ERROR
+    languages: [java]
+
+  - id: hardcoded-jwt-secret-yml
+    patterns:
+      - pattern: |
+          jwt:
+            secret: $SECRET
+    message: Secreto JWT hardcodeado en fichero de configuracion
+    severity: ERROR
+    languages: [yaml]
+
+  - id: actuator-expose-all
+    patterns:
+      - pattern: |
+          management:
+            endpoints:
+              web:
+                exposure:
+                  include: "*"
+    message: Actuator expone todos los endpoints — revisar include
+    severity: WARNING
+    languages: [yaml]

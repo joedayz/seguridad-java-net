@@ -1,0 +1,6 @@
+services:
+  jwt-aspnet-server:
+    build: ./jwt-demo
+    container_name: jwt-aspnet-server
+    ports:
+      - "8202:8202"

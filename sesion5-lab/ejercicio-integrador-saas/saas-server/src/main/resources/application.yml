@@ -1,0 +1,43 @@
+server:
+  port: 8208
+
+spring:
+  application:
+    name: saas-orders-service
+  datasource:
+    url: jdbc:h2:mem:orders;DB_CLOSE_DELAY=-1
+    username: sa
+    password:
+  jpa:
+    hibernate:
+      ddl-auto: none
+  sql:
+    init:
+      mode: always
+  h2:
+    console:
+      enabled: false
+
+# INTENCIONALMENTE INSEGURO — demo de secretos en repo (Gitleaks / TruffleHog)
+jwt:
+  secret: MiSecretoJWT_Prod_2024!
+stripe:
+  api-key: sk_live_demo_STRIPE_KEY_NUNCA_EN_GIT
+aws:
+  access-key: AKIA_DEMO_INSECURE_KEY
+  secret-key: wJalrXUtnFEMI_DEMO_SECRET
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+  endpoint:
+    env:
+      show-values: always
+    health:
+      show-details: always
+
+demo:
+  cors:
+    permissive: true

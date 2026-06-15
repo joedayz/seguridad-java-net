@@ -1,0 +1,6 @@
+services:
+  jwt-spring-server:
+    build: ./jwt-server
+    container_name: jwt-spring-server
+    ports:
+      - "8201:8201"
